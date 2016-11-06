@@ -49,6 +49,7 @@ class Router
                         $params = array_combine($route['selector']['captureGroupNames'], $params);
                     }
                     $_GET = array_merge($_GET, $params);
+                    $_REQUEST = array_merge($_REQUEST, $params);
                 }
                 return $route['content'];
             }

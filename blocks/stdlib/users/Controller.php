@@ -58,14 +58,16 @@ class Controller extends \proto\Controller
 
         $itemsPerPage = 18;
         $itemsCount = $this->model->countUsers($filter);
-        $pagesCount = ceil($itemsCount/$itemsPerPage);
-        $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 0;
-        if ($currentPage < 0) $currentPage = 0;
-        elseif ($currentPage > $pagesCount) $currentPage = $pagesCount;
+        $numPages = ceil($itemsCount/$itemsPerPage);
+        $thisPage = isset($_GET['page']) ? intval($_GET['page']) : 0;
+        if ($thisPage < 0) $thisPage = 0;
+        elseif ($thisPage > $numPages) $thisPage = $numPages;
         
-        $users = $this->model->readUsers(($currentPage - 1)*$itemsPerPage, $itemsPerPage, $filter);
+        $users = $this->model->readUsers(($thisPage - 1)*$itemsPerPage, $itemsPerPage, $filter);
 
-        return $this->view->render(compact('users', 'user', 'itemsCount', 'errors', 'success', 'filter', 'haveFilter'));
+        return $this->view->render(compact(
+            'users', 'user', 'itemsCount', 'errors', 'success', 'filter', 'haveFilter', 'thisPage', 'numPages'
+        ));
     }
 
 

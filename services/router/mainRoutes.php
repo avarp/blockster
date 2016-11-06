@@ -96,7 +96,8 @@ return array(
 
     'root' => array(
         'selector' => array(
-            'rgxp' => '/',
+            'rgxp' => '/([0-9]+)',
+            'captureGroupNames' => array('number'),
         ),
         'content' => array(
             'template' => '/templates/default/index.tpl',

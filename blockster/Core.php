@@ -181,7 +181,7 @@ class Core
         }
 
         //get info about cache for this block
-        $cacheControllerClass = $namespace.'\\cacheController';
+        $cacheControllerClass = $namespace.'\\CacheController';
         if (class_exists($cacheControllerClass) && method_exists($cacheControllerClass, $action)) {
             $cache = $cacheControllerClass::$action($params, $imposedTemplate);
             $cache['file'] = ROOT_DIR.$cacheDir.'/'.$cache['file'];
@@ -196,9 +196,9 @@ class Core
         }
         
         //read cache file
-        if ($cache['use']) {
+        if ($cache['use'] && file_exists($cache['file'])) {
             $output = require($cache['file']);
-            if ($output['expires'] > time()) {
+            if (time() > $output['expires']) {
                 unlink($cache['file']);
                 unset($output);
             }
