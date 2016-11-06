@@ -1,0 +1,18 @@
+AddDefaultCharset utf-8
+
+Options -Indexes
+DirectorySlash off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+
+    # redirect www.example.com -> example.com
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
+
+    # redirect all requests (and *.php, *.tpl, *.sqlite files) to index.php
+    RewriteCond %{REQUEST_URI} (.sqlite|.php|.tpl)$ [OR]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule> 
+
