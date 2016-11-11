@@ -3,7 +3,6 @@ namespace services\router;
 
 class Router
 {
-
     protected $routes;
 
     public function __construct($filename)
@@ -16,7 +15,7 @@ class Router
     {
         $selectableRoutes = array();
         foreach ($this->routes as $name => $route) if (isset($route['selector'])) {
-            if (!isset($route['selector']['method']) || strpos($route['selector']['method'], $_SERVER['REQUEST_METHOD']) !== false) {
+            if (!isset($route['selector']['httpMethod']) || strpos($route['selector']['httpMethod'], $_SERVER['REQUEST_METHOD']) !== false) {
                 if ($route['selector']['rgxp'] == $query) {
                     return $route['content'];
                 } else {

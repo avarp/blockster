@@ -96,7 +96,7 @@ return array(
 
     'root' => array(
         'selector' => array(
-            'rgxp' => '/([0-9]+)',
+            'rgxp' => '/',
             'captureGroupNames' => array('number'),
         ),
         'content' => array(
