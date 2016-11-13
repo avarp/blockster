@@ -5,6 +5,8 @@ class Controller extends \proto\Controller
 {
     public function actionIndex()
     {
+        checkAccess(100);
+        
         if (isset($_POST['deleteUser'])) $this->model->deleteUser(intval($_POST['deleteUser']));
 
         $errors = '';
@@ -21,7 +23,8 @@ class Controller extends \proto\Controller
             if ($user['email'] == '') $errors[] = 'Укажите E-Mail.';
             elseif (strpos($user['email'], '@') === false) $errors[] = 'E-Mail указан неверно.';
             if ($user['password'] != $_POST['passwordConfirm']) $errors[] = 'Пароль повторен неверно.';
-            if ($user['accessLevel'] > $_SESSION['accessLevel']) $errors[] = 'Вы не можете назначить уровень доступа выше своего.';
+            if ($user['accessLevel'] > $_SESSION['user']['accessLevel'])
+                $errors[] = 'Вы не можете назначить уровень доступа выше своего.';
 
             if (empty($errors)) {
                 if (!$this->model->saveUser($user)) {
@@ -77,7 +80,7 @@ class Controller extends \proto\Controller
         $login = isset($_POST['login']) ? $_POST['login'] : '';
         $errors = array();
 
-        if (isset($_SESSION['login'])) $errors[] = 'Вы авторизованы, но ваш уровень доступа недостаточен для просмотра данной страницы';
+        if (isset($_SESSION['user'])) $errors[] = 'Вы авторизованы, но ваш уровень доступа недостаточен для просмотра данной страницы';
         
         if (isset($_POST['authorize'])) {
             if ($this->model->logIn($_POST['login'], $_POST['password'])) {

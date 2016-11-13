@@ -30,11 +30,10 @@ class Core
             die();
         }
         session_start();
-        $this->accessLevel = isset($_SESSION['accessLevel']) ? $_SESSION['accessLevel'] : 0;
         $this->preparedBlocks = require(__DIR__.'/preparedBlocks.php');
         $this->router = new \services\router\Router('mainRoutes.php');
         if ($this->router->getRoute('error404') == false) die('The "error404" route does not exists'); 
-        if ($this->router->getRoute('auth') == false) die('The "auth" route does not exists'); 
+        if ($this->router->getRoute('error403') == false) die('The "error403" route does not exists'); 
         $this->eventor = new \services\eventor\Eventor('mainEvents.php');
         $this->eventor->fire('onSystemStart');
     }
@@ -52,7 +51,7 @@ class Core
         return $u;
     }
 
-    private function getHtml($routeQuery, $useSearch)
+    private function getText($routeQuery, $useSearch)
     {
         if ($useSearch) {
             // here it is assumed routeQuery contains URL 
@@ -62,11 +61,8 @@ class Core
             $this->route = $this->router->getRoute($routeQuery);
         }
 
-        if ($this->route === false) {
+        if ($this->route === false || !file_exists(ROOT_DIR.$this->route['template'])) {
             $this->error404();
-        } else {
-            if ($this->route['accessLevel'] > $this->accessLevel) $this->route = $this->router->getRoute('auth');
-            if (!file_exists(ROOT_DIR.$this->route['template'])) $this->error404();
         }
 
         $this->eventor->mergeEvents($this->route['events']);
@@ -87,7 +83,7 @@ class Core
 
     public function printPage()
     {
-        exit($this->getHtml($_SERVER['REQUEST_URI'], true));
+        exit($this->getText($_SERVER['REQUEST_URI'], true));
     }
 
 
@@ -99,7 +95,19 @@ class Core
         } else {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
         }
-        exit($this->getHtml('error404', false));
+        exit($this->getText('error404', false));
+    }
+
+
+    public function error403()
+    {
+        $sapiName = php_sapi_name();
+        if ($sapiName == 'cgi' || $sapiName == 'cgi-fcgi') {
+            header('Status: 403 Forbidden');
+        } else {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+        }
+        exit($this->getText('error403', false));
     }
 
 
@@ -109,14 +117,14 @@ class Core
             header('Location: '.$URL);
             die();
         } else {
-            exit($this->getHtml($URL, true));
+            exit($this->getText($URL, true));
         }
     }
 
 
     public function gotoRoute($routeKey)
     {
-        exit($this->getHtml($routeKey, false));
+        exit($this->getText($routeKey, false));
     }
 
 

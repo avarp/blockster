@@ -7,6 +7,8 @@
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
 * @version 3.6.3 (CMS Blockster adaptation)
 */
+checkAccess(100);
+
 $_GET['sqlite'] = '';
 $_GET['username'] = '';
 $_GET['db'] = 'services/database/db.sqlite';

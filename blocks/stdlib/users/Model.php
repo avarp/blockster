@@ -14,10 +14,8 @@ class Model
     {
         $user = $this->dbh->row("SELECT * FROM users WHERE login=? AND password=?", array($login, md5($password)));
         if (!empty($user)) {
-            if (isset($_SESSION['login'])) $this->logOut();
-            $_SESSION['login'] = $user['login'];
-            $_SESSION['userId'] = $user['id'];
-            $_SESSION['accessLevel'] = $user['accessLevel'];
+            if (isset($_SESSION['user'])) $this->logOut();
+            $_SESSION['user'] = $user;
             $this->dbh->exec("UPDATE users SET online=? WHERE id=?", array(1, $user['id']));
             return true;
         } else {
@@ -27,11 +25,9 @@ class Model
 
     public function logOut()
     {
-        if (isset($_SESSION['login'])) {
-            $this->dbh->exec("UPDATE users SET online=? WHERE login=?", array(0, $_SESSION['login']));
-            unset($_SESSION['userId']);
-            unset($_SESSION['login']);
-            unset($_SESSION['accessLevel']);
+        if (isset($_SESSION['user'])) {
+            $this->dbh->exec("UPDATE users SET online=? WHERE id=?", array(0, $_SESSION['user']['id']));
+            unset($_SESSION['user']);
         }
     }
 

@@ -3,16 +3,14 @@ return array(
     'error404' => array(
         'content' => array(
             'template' => '/templates/default/404.tpl',
-            'accessLevel' => 0,
             'positions' => array(),
             'events' => array(),
         ),
     ),
 
-    'auth' => array(
+    'error403' => array(
         'content' => array(
             'template' => '/templates/admin/auth.tpl',
-            'accessLevel' => 0,
             'positions' => array(),
             'events' => array(),
         ),
@@ -24,7 +22,6 @@ return array(
         ),
         'content' => array(
             'template' => '/templates/admin/index.tpl',
-            'accessLevel' => 100,
             'positions' => array(
                 'content' => array(
                     array('stdlib/admin', array(), ''),
@@ -40,7 +37,6 @@ return array(
         ),
         'content' => array(
             'template' => '/templates/admin/index.tpl',
-            'accessLevel' => 100,
             'positions' => array(
                 'content' => array(
                     array('stdlib/admin::actionSettings', array(), ''),
@@ -56,7 +52,6 @@ return array(
         ),
         'content' => array(
             'template' => '/templates/admin/index.tpl',
-            'accessLevel' => 100,
             'positions' => array(
                 'content' => array(
                     array('stdlib/users', array(), ''),
@@ -72,7 +67,6 @@ return array(
         ),
         'content' => array(
             'template' => '/templates/admin/index.tpl',
-            'accessLevel' => 100,
             'positions' => array(
                 'content' => array(
                     array('stdlib/menu::actionManager', array(), ''),
@@ -88,7 +82,6 @@ return array(
         ),
         'content' => array(
             'template' => '/templates/admin/adminer.php',
-            'accessLevel' => 100,
             'positions' => array(),
             'events' => array(),
         ),
@@ -97,11 +90,9 @@ return array(
     'root' => array(
         'selector' => array(
             'rgxp' => '/',
-            'captureGroupNames' => array('number'),
         ),
         'content' => array(
             'template' => '/templates/default/index.tpl',
-            'accessLevel' => 0,
             'positions' => array(),
             'events' => array(),
         ),
