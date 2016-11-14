@@ -16,6 +16,18 @@ return array(
         ),
     ),
 
+    '/ajax/...blockName...' => array(
+        'selector' => array(
+            'rgxp' => '/ajax/(.+)',
+            'captureGroupNames' => array('blockName'),
+        ),
+        'content' => array(
+            'template' => '/templates/admin/ajax.tpl',
+            'positions' => array(),
+            'events' => array(),
+        ),
+    ),
+
     '/admin' => array(
         'selector' => array(
             'rgxp' => '/admin',
@@ -76,7 +88,7 @@ return array(
         ),
     ),
 
-    'adminer' => array(
+    '/adminer' => array(
         'selector' => array(
             'rgxp' => '/adminer',
         ),
@@ -87,7 +99,7 @@ return array(
         ),
     ),
 
-    'root' => array(
+    '/' => array(
         'selector' => array(
             'rgxp' => '/',
         ),

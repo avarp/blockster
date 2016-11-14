@@ -23,8 +23,8 @@
             </div>
             <div class="card-section">
                 E-Mail: <?=$u['email']?><br>
-                Access level : <?=$u['accessLevel']?><br>
-                Online: <?=$u['online']?>
+                Уровень доступа : <?=$u['accessLevel']?><br>
+                Online: <?=$u['online'] == 1 ? 'да' : 'нет'?>
             </div>
             <div class="card-section r">
                 <form action="<?=$_SERVER['REQUEST_URI']?>" method="POST">

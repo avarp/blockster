@@ -14,7 +14,7 @@ function position($posName)
     return \blockster\Core::getInstance()->fillPosition($posName);
 }
 
-function checkAccess($minLevel, $maxLevel=0)
+function restrictAccessLevel($minLevel, $maxLevel=0)
 {
     if (
         !isset($_SESSION['user']) ||

@@ -5,7 +5,7 @@ class Controller extends \proto\Controller
 {
     public function actionIndex()
     {
-        checkAccess(100);
+        restrictAccessLevel(100);
         
         if (isset($_POST['deleteUser'])) $this->model->deleteUser(intval($_POST['deleteUser']));
 
@@ -101,6 +101,4 @@ class Controller extends \proto\Controller
         $this->model->logOut();
         \blockster\Core::getInstance()->redirect($_SERVER['REQUEST_URI']);
     }
-
-    
 }
