@@ -23,7 +23,7 @@ label {
     overflow: hidden;
 }
 input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
-.cell > label {line-height: 2em;}
+.cell > label {line-height: 2.5em;}
 
 .r {text-align: right;}
 .c {text-align: center;}
