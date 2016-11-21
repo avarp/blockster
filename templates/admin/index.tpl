@@ -9,13 +9,13 @@
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
     ));
     $this->setTitle('Панель управления');
-    $this->addCss(array(
+    $this->linkCss(array(
         '/templates/admin/css/grid-system.css',
         '/templates/admin/css/admin-panel.css',
         'http://fonts.googleapis.com/css?family=Ubuntu:italic,normal,bold&subset=cyrillic',
         '/templates/admin/font-awesome/css/font-awesome.min.css'
     ));
-    $this->addJs('/templates/admin/js/scripts.js');
+    $this->linkJs('/templates/admin/js/scripts.js');
 ?>
 </head>
 <body>

@@ -5,7 +5,5 @@ return array(
         'scriptsIsLast',
         'googlePageSpeed'
     ),
-    'renderMethod' => 'scriptsIsLast',
-    'cssEmbedding' => true,
-    'jsEmbedding' => true
+    'renderMethod' => 'scriptsIsLast'
 );

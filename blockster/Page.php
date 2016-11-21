@@ -26,7 +26,11 @@ class Page extends \proto\View
         $html = $output['html'];
         $html = str_replace(
             '</head>',
-            $this->writeMeta($output['meta']).$this->writeCss($output['css']).$this->writeJs($output['js']).'</head>',
+            $this->getMeta($output['meta']).
+            $this->getEmbedCss($output['css']['embed']).
+            $this->getLinkedCss($output['css']['linked']).
+            $this->getEmbedJs($output['js']['embed']).
+            $this->getLinkedJs($output['js']['linked']).'</head>',
             $html
         );
         return $html;
@@ -36,8 +40,14 @@ class Page extends \proto\View
     private function scriptsIsLast($output)
     {
         $html = $output['html'];
-        $html = str_replace('</head>', $this->writeMeta($output['meta']).$this->writeCss($output['css']).'</head>', $html);
-        $html = str_replace('</body>', $this->writeJs($output['js']).'</body>', $html);
+        $html = str_replace(
+            '</head>', 
+            $this->getMeta($output['meta']).
+            $this->getEmbedCss($output['css']['embed']).
+            $this->getLinkedCss($output['css']['linked']).'</head>',
+            $html
+        );
+        $html = str_replace('</body>', $this->getEmbedJs($output['js']['embed']).$this->getLinkedJs($output['js']['linked']).'</body>', $html);
         return $html;
     }
 
@@ -45,35 +55,21 @@ class Page extends \proto\View
     private function googlePageSpeed($output)
     {
         $html = $output['html'];
-
-        $embedCss = array_filter($output['css'], function($file) {
-            return (
-                substr($file, 0, 2) != '//' &&
-                substr($file, 0, 4) != 'http' &&
-                substr($file, strlen($file)-10) == '.embed.css'
-            );
-        });
-        $linkedCss = array_diff($output['css'], $embedCss);
-
-        $html = str_replace('</head>', $this->writeMeta($output['meta']).$this->writeCss($embedCss).'</head>', $html);
-        $html = str_replace('</body>', $this->writeJs($output['js'], 'async').'</body>', $html);
-        $html = str_replace('</html>', "</html>\n".$this->writeCss($linkedCss), $html);
+        $html = str_replace('</head>', $this->getMeta($output['meta']).$this->getEmbedCss($output['css']['embed']).'</head>', $html);
+        $html = str_replace('</body>', $this->getEmbedJs($output['js']['embed']).$this->getLinkedJs($output['js']['linked'], 'async').'</body>', $html);
+        $html = str_replace('</html>', "</html>\n".$this->getLinkedCss($output['css']['linked']), $html);
         return $html;
     }
 
 
-    private function writeCss($css, $attr='')
+    private function getLinkedCss($files)
     {
         $html = '';
-        foreach ($css as $file) {
+        foreach ($files as $file) {
             if (substr($file, 0, 2) == '//' || substr($file, 0, 4) == 'http') {
-                $html .= "\t<link $attr rel=\"stylesheet\" type=\"text/css\" href=\"$file\">\n";
+                $html .= "\t<link rel=\"stylesheet\" type=\"text/css\" href=\"$file\">\n";
             } elseif (file_exists(ROOT_DIR.$file)) {
-                if ($this->config['cssEmbedding'] && substr($file, strlen($file)-10) == '.embed.css') {
-                    $html .= "\t<style>\n".file_get_contents(ROOT_DIR.$file)."\n\t</style>\n";
-                } else {
-                    $html .= "\t<link $attr rel=\"stylesheet\" type=\"text/css\" href=\"".SITE_URL.$file."\">\n";
-                }
+                $html .= "\t<link rel=\"stylesheet\" type=\"text/css\" href=\"".SITE_URL.$file."\">\n";
             } else {
                 $html .= "\t<!-- css file not exists: $file -->\n";
             }
@@ -82,18 +78,14 @@ class Page extends \proto\View
     }
 
 
-    private function writeJs($js, $attr='')
+    private function getLinkedJs($files, $attr='')
     {
         $html = '';
-        foreach ($js as $file) {
+        foreach ($files as $file) {
             if (substr($file, 0, 2) == '//' || substr($file, 0, 4) == 'http') {
                 $html .= "\t<script $attr src=\"$file\"></script>\n";
             } elseif (file_exists(ROOT_DIR.$file)) {
-                if ($this->config['jsEmbedding'] && substr($file, strlen($file)-9) == '.embed.js') {
-                    $html .= "\t<script>\n".file_get_contents(ROOT_DIR.$file)."\n\t</script>";
-                } else {
-                    $html .= "\t<script $attr src=\"".SITE_URL.$file."\"></script>\n";
-                }
+                $html .= "\t<script $attr src=\"".SITE_URL.$file."\"></script>\n";
             } else {
                 $html .= "\t<!-- js file not exists: $file -->\n";
             }
@@ -102,7 +94,33 @@ class Page extends \proto\View
     }
 
 
-    private function writeMeta($meta)
+    private function getEmbedCss($styles)
+    {
+        if (!empty($styles)) {
+            $html = "<style>\n";
+            foreach ($styles as $style) $html .= $style."\n";
+            $html .= "\n</style>\n";
+            return $html;
+        } else {
+            return '';
+        }
+    }
+
+
+    private function getEmbedJs($scripts)
+    {
+        if (!empty($scripts)) {
+            $html = "<script>\n";
+            foreach ($scripts as $script) $html .= $script."\n";
+            $html .= "\n</script>\n";
+            return $html;
+        } else {
+            return '';
+        }
+    }
+
+
+    private function getMeta($meta)
     {
         $html = '';
         foreach ($meta as $key => $tag) {

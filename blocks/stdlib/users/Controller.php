@@ -80,7 +80,7 @@ class Controller extends \proto\Controller
         $login = isset($_POST['login']) ? $_POST['login'] : '';
         $errors = array();
 
-        if (isset($_SESSION['user'])) $errors[] = 'Вы авторизованы, но ваш уровень доступа недостаточен для просмотра данной страницы';
+        if (isset($_SESSION['user'])) $errors[] = 'Вы авторизованы, но ваш уровень доступа недостаточен для просмотра данной страницы. Если у вас есть учетная запись с более высоким уровнем доступа, введите логин и пароль от неё.';
         
         if (isset($_POST['authorize'])) {
             if ($this->model->logIn($_POST['login'], $_POST['password'])) {

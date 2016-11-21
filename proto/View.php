@@ -9,8 +9,8 @@ class View
     protected $output = array(
         'isBlockOutput' => true,
         'html' => '',
-        'css' => array(),
-        'js' => array(),
+        'css' => array('linked' => array(), 'embed' => array()),
+        'js' => array('linked' => array(), 'embed' => array()),
         'meta' => array(),
     );
 
@@ -40,21 +40,39 @@ class View
         return $this->output;
     }
 
-    public function addCss($style)
+    public function linkCss($file)
     {
-        if (!empty($style)) if (is_array($style)) {
-            $this->output['css'] = array_unique(array_merge($this->output['css'], $style));
+        if (!empty($file)) if (is_array($file)) {
+            $this->output['css']['linked'] = array_unique(array_merge($this->output['css']['linked'], $file));
         } else {
-            if (!in_array($style, $this->output['css'])) $this->output['css'][] = $style;
+            if (!in_array($file, $this->output['css']['linked'])) $this->output['css']['linked'][] = $file;
         }
     }
 
-    public function addJs($script)
+    public function linkJs($file)
+    {
+        if (!empty($file)) if (is_array($file)) {
+            $this->output['js']['linked'] = array_unique(array_merge($this->output['js']['linked'], $file));
+        } else {
+            if (!in_array($file, $this->output['js']['linked'])) $this->output['js']['linked'][] = $file;
+        }
+    }
+
+    public function embedCss($styles)
+    {
+        if (!empty($styles)) if (is_array($styles)) {
+            $this->output['css']['embed'] = array_unique(array_merge($this->output['css']['embed'], $styles));
+        } else {
+            if (!in_array($styles, $this->output['css']['embed'])) $this->output['css']['embed'][] = $styles;
+        }
+    }
+
+    public function embedJs($script)
     {
         if (!empty($script)) if (is_array($script)) {
-            $this->output['js'] = array_unique(array_merge($this->output['js'], $script));
+            $this->output['js']['embed'] = array_unique(array_merge($this->output['js']['embed'], $script));
         } else {
-            if (!in_array($script, $this->output['js'])) $this->output['js'][] = $script;
+            if (!in_array($script, $this->output['js']['embed'])) $this->output['js']['embed'][] = $script;
         }
     }
 

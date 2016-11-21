@@ -19,7 +19,7 @@ class Controller extends \proto\Controller
 
     public function actionManager()
     {
-        restrictAccessLevel(200);
+        restrictAccessLevel(100);
         $this->view->setTemplate('manager.tpl');
         return $this->view->render();
     }

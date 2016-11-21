@@ -251,8 +251,10 @@ class Core
 
         //modify page if output has right structure returned from View class instance.
         if (is_array($output) && isset($output['isBlockOutput']) && $output['isBlockOutput'] === true) {
-            $this->page->addCss($output['css']);
-            $this->page->addJs($output['js']);
+            $this->page->linkCss($output['css']['linked']);
+            $this->page->linkJs($output['js']['linked']);
+            $this->page->embedCss($output['css']['embed']);
+            $this->page->embedJs($output['js']['embed']);
             $this->page->addMeta($output['meta']);
             return $output['html'];
         } else {
