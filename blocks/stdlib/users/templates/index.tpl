@@ -30,8 +30,8 @@
                 <form action="<?=$_SERVER['REQUEST_URI']?>" method="POST">
                     <button
                         type="button"
-                        class="btn btn-flat"
-                        data-toggle-dialog="userEditorDialog"
+                        class="btn btn-default"
+                        data-toggle-dialog="userEditDialog"
                         data-dialog-init-param="<?=$key?>"
                     >Изменить</button>
                     <button
@@ -39,7 +39,7 @@
                         data-confirm="Удалить пользователя #<?=$u['id']?> c логином <?=$u['login']?>?<br>Отменить удаление будет нельзя."
                         name="deleteUser"
                         value="<?=$u['id']?>"
-                        class="btn btn-flat"
+                        class="btn btn-danger"
                     >Удалить</button>
                 </form>
             </div>

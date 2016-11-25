@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="card-section r">
-                <input type="submit" name="authorize" class="btn btn-flat" value="Войти">
+                <input type="submit" name="authorize" class="btn btn-primary" value="Войти">
             </div>
         </div>
     </form>

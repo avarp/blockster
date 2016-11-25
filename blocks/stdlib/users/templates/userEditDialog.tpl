@@ -47,8 +47,8 @@
                 </div>
             </div>
             <div class="card-section r">
-                <input type="button" tabindex="-1" class="btn btn-flat" data-toggle-dialog="userEditDialog" value="Отмена">
-                <input type="submit" name="saveUser" class="btn btn-flat" value="Сохранить">
+                <input type="button" tabindex="-1" class="btn btn-default" data-toggle-dialog="userEditDialog" value="Отмена">
+                <input type="submit" name="saveUser" class="btn btn-primary" value="Сохранить">
             </div>
         </div>
     </form>

@@ -51,12 +51,13 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
 }
 
 #header > .btn-list .btn {
-    width: 4em;
+    min-width: 4em;
     height: 4em;
     padding: 0;
     line-height: 4em;
     color: #fff;
     box-shadow: none;
+    border: none;
 }
 
 #header > .btn-list .btn:hover {
@@ -80,7 +81,7 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
 
 
 #main {
-    padding: 4em 5em;
+    padding: 3em 4em;
     min-height: calc(100vh - 4em);
 }
 @media (max-width: 768px) {
@@ -147,128 +148,197 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
     box-shadow: 0 0 3px rgba(0,0,0,0.35);
 }
 
+/*******************************************************************************
+    MATERIAL DESIGN CARDS
+*******************************************************************************/
 .card {
     background-color: #fff;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.35);
     border-radius: 2px;
 }
-
 .card-header {
     background-color: #08c;
     color: #fff;
     padding: 0.8em 1em;
     font-weight: bold;
 }
-
 .card-section {
     padding: 1em;
     border-top: 1px solid #e8e8e8;
 }
-
 .card-section:first-of-type {
     border: none;
 }
 
+
+
+/*******************************************************************************
+    STANDARD BUTTONS
+*******************************************************************************/
 .btn {
     display: inline-block;
-    border: none;
+    border: 1px solid rgba(0,0,0,0.15);
     border-radius: 2px;
     outline: none;
     background-color: transparent;
     padding: 0.5em 1em;
     font: inherit;
-    font-weight: 900;
+    font-weight: bold;
+    line-height: 1.5em;
+    height: 2.5em;
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    min-width: 7em;
 }
-.btn-flat {color: #080; text-transform: uppercase; box-shadow: none; padding: 0 0.5em; transition: none; }
-.btn-flat:hover, .btn-flat:focus {color: #0b0;}
+.btn:active {
+    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.35);
+}
 
-.btn-default {color: inherit; background-color: #fff;}
-.btn-default:hover, .btn-default:focus {color: #0af;}
 
-.btn-primary {color: #fff; background-color: #08c;}
-.btn-primary:hover, .btn-primary:focus {background-color: #0af;}
+.btn.btn-default {color: inherit; background-color: #fff;}
+.btn.btn-default:hover, .btn.btn-default:focus {color: #0af;}
 
-.btn-success {color: #fff; background-color: #080;}
-.btn-success:hover, .btn-success:focus {background-color: #0a0;}
+.btn.btn-primary {color: #fff; background-color: #08c;}
+.btn.btn-primary:hover, .btn.btn-primary:focus {background-color: #0af;}
 
-.btn-danger {color: #fff; background-color: #A50000;}
-.btn-danger:hover, .btn-danger:focus {background-color: #FF3232;}
+.btn.btn-success {color: #fff; background-color: #0a0;}
+.btn.btn-success:hover, .btn.btn-success:focus {background-color: #0c0;}
 
+.btn.btn-danger {color: #fff; background-color: #C00;}
+.btn.btn-danger:hover, .btn.btn-danger:focus {background-color: #FF3232;}
+
+
+
+/*******************************************************************************
+    TEXTFIELD, SELECT
+*******************************************************************************/
 input[type="text"], input[type="password"], select {
     color: inherit;
-    line-height: 1em;
     font: inherit;
     padding: 0.5em;
+    line-height: 1.5em;
     width: 100%;
+    height: 2.5em;
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0,0,0,0.15);
     box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
     border-radius: 2px;
 }
-
-input[type="text"]:focus, input[type="password"]:focus, select:focus {border-color: #080;}
-
+input[type="text"]:focus, input[type="password"]:focus, select:focus {border-color: #0a0;}
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAHCAYAAAA4R3wZAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABaSURBVBiVlc7BDYAwDEPR37IY07RjkI6RPTIAA2SncAJRFUTx0dKznEopAmz8S1vcfTezBKyzSFUlA6iqAG0WAeSzmcAX6uAH7tAAX/CAAFJEPP6qtcptaMgBf9QoapFdrwoAAAAASUVORK5CYII=');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAYAAAAbQcSUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AsYCxsIk1VTCgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAACPSURBVCjPlc+9DgFBFAbQsyYkotZINEoVxUpQeHrR8go06BUb8dPsJpOxk6xb3vvNyTcBAUvMcMXb73TJCFhhgwlGuCThJrOuM0Oc8UmxHqroMMcO/QQqozeVzATc8cQUBcZRwzKBjjjg1YYVUcMFttHuUaMxtM9BTTP1N29Jw8E/UIzlwM5QirWBp64QfAE/QSgKP5OaXAAAAABJRU5ErkJggg==');
     background-position: right center;
     background-repeat: no-repeat;
-
 }
 
+
+
+/*******************************************************************************
+    TEXTAREA
+*******************************************************************************/
 textarea {
+    color: inherit;
+    font: inherit;
     width: 100%;
     min-height: 2em;
     outline: none;
     padding: 0.5em;
-    color: #555;
-    font: inherit;
-    border: none;
-    border-bottom: 2px solid #080;
-    background-color: #f0f0f0;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.15);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 2px;
     resize: vertical;
 }
-
 textarea:focus {
     border-color: #0b0;
 }
 
 
-input[type="checkbox"] + span, input[type="radio"] + span {
+
+/*******************************************************************************
+    CHECKBOXES, RADIO
+*******************************************************************************/
+input[hidden][type="checkbox"] + span, input[hidden][type="radio"] + span {
     display: inline-block;
     vertical-align: middle;
-    color: #080;
-    transition: color 0.3s ease-in-out;
+    width: 1.5em;
+    height: 1.5em;
     text-align: center;
-    font: 1.5rem/1.5rem "FontAwesome";
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.15);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+    font: 1rem/1.4em "FontAwesome";
+    color: #08c;    
 }
-input[type="checkbox"] + span::after {
-    content: "\f0c8";
+input[hidden][type="checkbox"] + span {border-radius: 2px;}
+input[hidden][type="radio"] + span {border-radius: 50%;}
+
+input[hidden][type="checkbox"] + span::after {
+    content: "";
 }
-input[type="radio"] + span::after {
-    content: "\f10c";
+input[hidden][type="radio"] + span::after {
+    content: "";
 }
-input[type="checkbox"]:checked + span::after {
-    content: "\f14a";
+input[hidden][type="checkbox"]:checked + span::after {
+    content: "\f00c";
 }
-input[type="radio"]:checked + span::after {
-    content: "\f192";
-}
-label:hover > span, label:hover > span,
-input[type="checkbox"]:focus + span, input[type="radio"]:focus + span {
-    color: #0b0;
-}
-input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
-    color: #ccc;
+input[hidden][type="radio"]:checked + span::after {
+    content: "\f111";
 }
 
+
+
+/*******************************************************************************
+    FIELDSET
+*******************************************************************************/
+fieldset {
+    display: block;
+    padding: 1em;
+    padding-top: 0.5em;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 2px;
+}
+fieldset > legend {
+    padding: 0 0.5em;
+}
+
+
+
+/*******************************************************************************
+    DISABLED ELEMENTS
+*******************************************************************************/
+fieldset[disabled] > :not(legend) input,
+fieldset[disabled] > :not(legend) input[hidden] + span,
+fieldset[disabled] > :not(legend) textarea,
+fieldset[disabled] > :not(legend) button,
+fieldset[disabled] > :not(legend) select,
+fieldset[disabled] > :not(legend) .btn,
+fieldset[disabled] > input,
+fieldset[disabled] > input[hidden] + span,
+fieldset[disabled] > textarea,
+fieldset[disabled] > button,
+fieldset[disabled] > select,
+fieldset[disabled] > .btn,
+[disabled],
+[disabled]:hover,
+[disabled][hidden] + span
+{
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: rgba(0,0,0,0.2) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    cursor: default !important;
+}
+
+
+
+/*******************************************************************************
+    MODAL WINDOWS
+*******************************************************************************/
 .modal-wrap {
     position: fixed;
     top: 0;
@@ -281,7 +351,6 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
     text-align: center;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
-
 .modal {
     display: inline-block;
     vertical-align: middle;
@@ -289,6 +358,11 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
     text-align: left;
 }
 
+
+
+/*******************************************************************************
+    ALERTS
+*******************************************************************************/
 .alert {
     padding: 1.25em;
     padding-left: 5em;
@@ -313,13 +387,13 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
 
 .alert-danger {
     background-color: #fcc;
-    border-color: #b00;
-    color: #700;
+    border-color: #C00;
+    color: #900;
     box-shadow: 0 5px 15px rgba(80,0,0,0.35);
 }
 .alert-danger::after {
     content: "\f06a";
-    background-color: #b00;
+    background-color: #C00;
 }
 
 .alert-info {
@@ -344,6 +418,11 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
     background-color: #080;
 }
 
+
+
+/*******************************************************************************
+    SYSTEM MESSAGE at top of the screen (it disappears via JS when hovering)
+*******************************************************************************/
 .system-message {
     display: block;
     position: fixed;
@@ -357,30 +436,35 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
     opacity: 0;
     transform: scale(1.5);
 }
-
 .system-message > .alert {
     display: inline-block;
 }
 
+
+
+/*******************************************************************************
+    PAGINATION
+*******************************************************************************/
 .pagination {
     display: inline-block;
     list-style: none;
     margin: 0 auto;
     text-align: center;
     font-size: 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
     border-radius: 2px;
-    background-color: #fff;
+    overflow: hidden;
     font-weight: bold;
 }
 .pagination > li {
     font-size: 1rem;
     display: inline-block;
     vertical-align: top;
-    border-right: 1px solid #e8e8e8;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-right: none;
+    background-color: #fff;
 }
 .pagination > li:last-of-type {
-    border-right: none;
+    border-right: 1px solid rgba(0,0,0,0.15);
 }
 .pagination li > * {
     display: block;
@@ -388,10 +472,9 @@ input[type="checkbox"]:disabled + span, input[type="radio"]:disabled + span {
     width: 2.5em;
     color: inherit;
     text-decoration: none;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
-.pagination > li.active > * {
-    background-color: #080;
+.pagination > li.active {
+    background-color: #08c;
     color: #fff;
 }
 .pagination > li:hover > a {

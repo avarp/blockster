@@ -39,11 +39,11 @@
                 </div>
             </div>
             <div class="card-section r">
-                <input type="button" tabindex="-1" class="btn btn-flat" data-toggle-dialog="userSearchDialog" value="Отмена">
+                <input type="button" tabindex="-1" class="btn btn-default" data-toggle-dialog="userSearchDialog" value="Отмена">
                 <?php if ($haveFilter) { ?>
-                    <input type="submit" tabindex="-1" class="btn btn-flat" name="dropFilter" value="Сбросить">
+                    <input type="submit" tabindex="-1" class="btn btn-danger" name="dropFilter" value="Сбросить">
                 <?php } ?>
-                <input type="submit" class="btn btn-flat" name="setFilter" value="Применить">
+                <input type="submit" class="btn btn-primary" name="setFilter" value="Применить">
             </div>
         </div>
     </form>

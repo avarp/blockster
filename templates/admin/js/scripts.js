@@ -44,12 +44,12 @@ window.onload = function() {
                     '+this.getAttribute('data-confirm')+'\
                 </div>\
                 <div class="card-section r">\
-                    <button type="button" class="btn btn-flat">Да</button>\
-                    <button type="button" class="btn btn-flat">Нет</button>\
+                    <button type="button" class="btn btn-default">Нет</button>\
+                    <button type="button" class="btn btn-danger">Да</button>\
                 </div>\
             </div>';
-            var yesBtn = dialog.getElementsByTagName('BUTTON')[0];
-            var noBtn = dialog.getElementsByTagName('BUTTON')[1];
+            var yesBtn = dialog.getElementsByTagName('BUTTON')[1];
+            var noBtn = dialog.getElementsByTagName('BUTTON')[0];
             yesBtn.target = this.form;
 
             yesBtn.onclick = function() {
