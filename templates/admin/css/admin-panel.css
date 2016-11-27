@@ -185,8 +185,8 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
     padding: 0.5em 1em;
     font: inherit;
     font-weight: bold;
-    line-height: 1.5em;
     height: 2.5em;
+    line-height: 1em;
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;

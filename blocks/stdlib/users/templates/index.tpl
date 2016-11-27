@@ -1,4 +1,8 @@
-<h1>Пользователи</h1>
+<?php 
+namespace blocks\stdlib\users;
+
+
+?><h1>Пользователи</h1>
 <p>
     <?=$haveFilter ? 'Найдено' : 'Всего'?> пользователей: <?=$itemsCount?><br>
     <button
@@ -24,7 +28,7 @@
             <div class="card-section">
                 E-Mail: <?=$u['email']?><br>
                 Уровень доступа : <?=$u['accessLevel']?><br>
-                Online: <?=$u['online'] == 1 ? 'да' : 'нет'?>
+                Online: <?=($u['isOnline'] == 1 && time() - $u['trackingTimestamp'] < ONLINE_FLAG_LIFETIME) ? 'да' : 'нет'?>
             </div>
             <div class="card-section r">
                 <form action="<?=$_SERVER['REQUEST_URI']?>" method="POST">

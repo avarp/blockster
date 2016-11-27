@@ -28,10 +28,10 @@
                         <input type="text" name="filter[emailLike]" value="<?=$filter['emailLike']?>">
                     </div>
                     <div class="cell xs-4">
-                        <label><input type="radio" name="filter[onlineStatus]" value="1" <?=$filter['onlineStatus']==1 ? 'checked' : ''?> hidden><span></span> Онлайн</label>
+                        <label><input type="radio" name="filter[onlineStatus]" value="online" <?=$filter['onlineStatus']=='online' ? 'checked' : ''?> hidden><span></span> Онлайн</label>
                     </div>
                     <div class="cell xs-4">
-                        <label><input type="radio" name="filter[onlineStatus]" value="0" <?=$filter['onlineStatus']==0 ? 'checked' : ''?> hidden><span></span> Оффлайн</label>
+                        <label><input type="radio" name="filter[onlineStatus]" value="offline" <?=$filter['onlineStatus']=='offline' ? 'checked' : ''?> hidden><span></span> Оффлайн</label>
                     </div>
                     <div class="cell xs-4">
                         <label><input type="radio" name="filter[onlineStatus]" value="any" <?=$filter['onlineStatus']=='any' ? 'checked' : ''?> hidden><span></span> Все</label>

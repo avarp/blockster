@@ -1,5 +1,6 @@
 <?php
 namespace blocks\stdlib\users;
+const ONLINE_FLAG_LIFETIME = 900;//15 min
 
 class Controller extends \proto\Controller
 {
@@ -67,9 +68,10 @@ class Controller extends \proto\Controller
         elseif ($thisPage > $numPages) $thisPage = $numPages;
         
         $users = $this->model->readUsers(($thisPage - 1)*$itemsPerPage, $itemsPerPage, $filter);
-
         return $this->view->render(compact(
-            'users', 'user', 'itemsCount', 'errors', 'success', 'filter', 'haveFilter', 'thisPage', 'numPages'
+            'users', 'user', 'itemsCount', 'errors',
+            'success', 'filter', 'haveFilter', 'thisPage',
+            'numPages'
         ));
     }
 
@@ -100,5 +102,27 @@ class Controller extends \proto\Controller
     {
         $this->model->logOut();
         \blockster\Core::getInstance()->redirect($_SERVER['REQUEST_URI']);
+    }
+
+    public static function addTrackingScript($page)
+    {
+        if (isset($_SESSION['user'])) {
+            $page->embedJs("
+                setInterval(function(){
+                    var xhr = new XMLHttpRequest()
+                    xhr.open('GET', '".SITE_URL."/ajax/stdlib/users::ajaxUpdateTrackingTimestamp', true)
+                    xhr.send()
+                }, ".(ONLINE_FLAG_LIFETIME*900).")
+            ");
+            if (time() - $_SESSION['user']['trackingTimestamp'] > ONLINE_FLAG_LIFETIME) {
+                $model = new Model;
+                $model->updateTrackingTimestamp();
+            }
+        }
+    }
+
+    public function ajaxUpdateTrackingTimestamp()
+    {
+        if (isset($_SESSION['user'])) $this->model->updateTrackingTimestamp();
     }
 }

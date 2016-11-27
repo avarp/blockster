@@ -16,7 +16,7 @@ class Model
         if (!empty($user)) {
             if (isset($_SESSION['user'])) $this->logOut();
             $_SESSION['user'] = $user;
-            $this->dbh->exec("UPDATE users SET online=? WHERE id=?", array(1, $user['id']));
+            $this->dbh->exec("UPDATE users SET isOnline=?, trackingTimestamp=? WHERE id=?", array(1, time(), $user['id']));
             return true;
         } else {
             return false;
@@ -26,7 +26,7 @@ class Model
     public function logOut()
     {
         if (isset($_SESSION['user'])) {
-            $this->dbh->exec("UPDATE users SET online=? WHERE id=?", array(0, $_SESSION['user']['id']));
+            $this->dbh->exec("UPDATE users SET isOnline=?, trackingTimestamp=? WHERE id=?", array(0, time(), $_SESSION['user']['id']));
             unset($_SESSION['user']);
         }
     }
@@ -39,7 +39,8 @@ class Model
             'password' => '',
             'accessLevel' => 0,
             'email' => 0,
-            'online' => 0,
+            'isOnline' => 0,
+            'trackingTimestamp' => time(),
         );
     }
 
@@ -58,8 +59,11 @@ class Model
         if (!empty($filter['emailLike'])) {
             $where[] = "email LIKE '%$filter[emailLike]%'";
         }
-        if ($filter['onlineStatus'] != 'any') {
-            $where[] = "online = $filter[onlineStatus]";
+        if ($filter['onlineStatus'] == 'online') {
+            $where[] = 'isOnline = 1';
+            $where[] = time().' - trackingTimestamp < '.ONLINE_FLAG_LIFETIME;
+        } elseif ($filter['onlineStatus'] == 'offline') {            
+            $where[] = '(isOnline == 0 OR '.time().' - trackingTimestamp > '.ONLINE_FLAG_LIFETIME.')';
         }
         if (!empty($where)) $where = 'WHERE '.implode(' AND ', $where);
         else $where = '';
@@ -81,8 +85,11 @@ class Model
     public function saveUser($user)
     {
         if ($user['id'] == 0) {
+            unset($user['id']);
             $user['password'] = md5($user['password']);
-            $sql = "INSERT INTO users (login, password, accessLevel, email, online) VALUES (:login, :password, :accessLevel, :email, :online)";
+            $fields = '('.implode(',', array_keys($user)).')';
+            $placeholders = '(:'.implode(',:', array_keys($user)).')';
+            $sql = "INSERT INTO users $fields VALUES $placeholders";
         } else {
             if (!empty($user['password'])) {
                 $user['password'] = md5($user['password']);
@@ -102,5 +109,12 @@ class Model
     public function getIdByLogin($login)
     {
         return $this->dbh->value("SELECT id FROM users WHERE login=?", array($login));
+    }
+
+    public function updateTrackingTimestamp()
+    {
+        $_SESSION['user']['isOnline'] = 1;
+        $_SESSION['user']['trackingTimestamp'] = time();
+        $this->dbh->exec("UPDATE users SET isOnline=?, trackingTimestamp=? WHERE id=?", array(1, time(), $_SESSION['user']['id']));
     }
 }
