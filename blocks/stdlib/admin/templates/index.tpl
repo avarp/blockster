@@ -92,3 +92,12 @@
         </p>
     </fieldset>
 </p>
+<div class="alert alert-success">
+    Операция выполнена успешно
+</div>
+<div class="alert alert-info">
+    Операция выполнена
+</div>
+<div class="alert alert-danger">
+    Операция выполнена с ошибками
+</div>

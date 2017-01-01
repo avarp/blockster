@@ -10,6 +10,6 @@
 	<h1>404 Not Found</h1>
 	<p>Страница <?=$_SERVER['REQUEST_URI']?> не существует на данном сайте.</p>
 	<hr>
-	<address>CMS: Blockster v0.1 на сайте "<?=SITE_NAME?>"</address>
+	<address>CMS: Blockster v<?=CMS_VERSION?> на сайте "<?=SITE_NAME?>"</address>
 </body>
 </html>

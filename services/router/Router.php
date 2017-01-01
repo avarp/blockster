@@ -7,7 +7,7 @@ class Router
 
     public function __construct($filename)
     {
-        $this->routes = require(__DIR__.'/'.$filename);
+        $this->routes = json_decode(file_get_contents(__DIR__.'/'.$filename), true);
     }
 
 

@@ -7,14 +7,13 @@
         '<meta http-equiv="X-UA-Compatible" content="IE=edge">',
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
     ));
-    $this->setTitle('Нужна авторизация');
+    $this->setTitle('Доступ ограничен');
     $this->linkCss(array(
-        '/templates/admin/css/grid-system.css',
-        '/templates/admin/css/admin-panel.css',
-        'http://fonts.googleapis.com/css?family=Ubuntu:italic,normal,bold&subset=cyrillic',
+        '/templates/admin/wolframe/flexbox-grid.css',
+        '/templates/admin/wolframe/wolframe.css',
+        '/templates/admin/style.css',
         '/templates/admin/font-awesome/css/font-awesome.min.css'
     ));
-    $this->linkJs('/templates/admin/js/scripts.js');
 ?>
 </head>
 <body>

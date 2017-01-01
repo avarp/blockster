@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
+header('Content-Type: text/plain; charset=utf-8');
 
 if (PHP_VERSION_ID < 50200) die('ERROR #1: You need PHP version 5.3.0 or greater.');
 
@@ -22,21 +22,21 @@ $protocol = (!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['
 $siteUrl = $protocol.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 if (substr($siteUrl, -1) == '/') $siteUrl = substr($siteUrl, 0, strlen($siteUrl)-1);
 
-if (!file_exists('config.local.php')) {
-    file_put_contents('config.local.php',
+if (!file_exists('environment.local.php')) {
+    file_put_contents('environment.local.php',
 "<?php
 #require('install.php');
 define('SITE_URL', '$siteUrl');
 define('ROOT_DIR', getcwd());
 define('SITE_NAME', 'The Site');
 define('CMS_START', microtime(true));
-define('CMS_VERSION', 0.1);"
+define('CMS_VERSION', '0.2');"
     );
 } else {
     $config = file_get_contents('config.php');
     $config = str_replace('~SITE_URL~', $siteUrl, $config);
     $config = str_replace("require('install.php')", "#require('install.php')", $config);
-    file_put_contents('config.local.php', $config);
+    file_put_contents('environment.local.php', $config);
 }
 
 header('Location: '.$_SERVER['REQUEST_URI']);

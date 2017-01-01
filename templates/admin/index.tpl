@@ -10,31 +10,51 @@
     ));
     $this->setTitle('Панель управления');
     $this->linkCss(array(
-        '/templates/admin/css/grid-system.css',
-        '/templates/admin/css/admin-panel.css',
-        'http://fonts.googleapis.com/css?family=Ubuntu:italic,normal,bold&subset=cyrillic',
+        '/templates/admin/wolframe/flexbox-grid.css',
+        '/templates/admin/wolframe/wolframe.css',
+        '/templates/admin/style.css',
         '/templates/admin/font-awesome/css/font-awesome.min.css'
     ));
-    $this->linkJs('/templates/admin/js/scripts.js');
+    $this->linkJs(
+        '/templates/admin/wolframe/wolframe.js'
+    );
 ?>
 </head>
 <body>
     <div class="grid" id="wrap">
         <header class="cell xs-12" id="header">
             <ul class="btn-list">
-                <li><button class="btn hidden-md-up" type="button" data-toggle-height="main-menu"><i class="fa fa-lg fa-bars"></i></button></li>
-                <li><form action="<?=$_SERVER['REQUEST_URI']?>" method="POST"><button class="btn" type="submit" name="logOut" title="Выйти из системы"><i class="fa fa-lg fa-sign-out"></i></button></form></li>
-                <li><a href="/" class="btn" type="button" data-number="67"><i class="fa fa-lg fa-envelope"></i></a></li> 
+                <li>
+                    <button
+                        class="btn hidden-lg-up"
+                        type="button"
+                        data-wf-actions='{"click":[{"action":"toggleHeight", "target":"#main-menu"}]}'
+                    >
+                        <i class="fa fa-lg fa-bars"></i>
+                    </button>
+                </li>
+                <li>
+                    <form action="<?=$_SERVER['REQUEST_URI']?>" method="POST">
+                        <button class="btn" type="submit" name="logOut" title="Выйти из системы">
+                            <i class="fa fa-lg fa-sign-out"></i>
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <a href="/" class="btn" type="button" data-number="67">
+                        <i class="fa fa-lg fa-envelope"></i>
+                    </a>
+                </li> 
             </ul>
         </header>
-        <nav class="cell md-3 lg-2" id="nav">
+        <nav class="cell lg-3 xl-2" id="nav">
             <?=block(
                 'stdlib/menu',
-                array('menuName' => 'adminPanelMenu', 'class' => 'menu', 'id' => 'main-menu'),
+                array('menuName' => 'adminPanelMenu', 'class' => 'menu hidden-md-down', 'id' => 'main-menu'),
                 'adminPanelMenu.tpl'
             )?>
         </nav>
-        <main class="cell md-9 lg-10" id="main">
+        <main class="cell lg-9 xl-10" id="main">
             <?=position('content')?>
         </main>
     </div>

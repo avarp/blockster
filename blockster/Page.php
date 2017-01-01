@@ -3,12 +3,11 @@ namespace blockster;
 
 class Page extends \proto\View
 {
-
     public function __construct($template)
     {
         $this->tpldir = pathinfo($template, PATHINFO_DIRNAME);
         $this->tplfile = pathinfo($template, PATHINFO_BASENAME);
-        $this->config = require(__DIR__.'/pageConfig.php');
+        $this->config = json_decode(file_get_contents(__DIR__.'/config.json'), true);
     }
 
 

@@ -104,22 +104,24 @@ class Controller extends \proto\Controller
         \blockster\Core::getInstance()->redirect($_SERVER['REQUEST_URI']);
     }
 
+
     public static function addTrackingScript($page)
     {
         if (isset($_SESSION['user'])) {
-            $page->embedJs("
-                setInterval(function(){
-                    var xhr = new XMLHttpRequest()
-                    xhr.open('GET', '".SITE_URL."/ajax/stdlib/users::ajaxUpdateTrackingTimestamp', true)
-                    xhr.send()
-                }, ".(ONLINE_FLAG_LIFETIME*900).")
-            ");
+            $page->embedJs(
+                "setInterval(function(){".
+                    "var xhr = new XMLHttpRequest();".
+                    "xhr.open('GET', '".SITE_URL."/ajax/stdlib/users::ajaxUpdateTrackingTimestamp', true);".
+                    "xhr.send()".
+                "}, ".(ONLINE_FLAG_LIFETIME*1000).")"
+            );
             if (time() - $_SESSION['user']['trackingTimestamp'] > ONLINE_FLAG_LIFETIME) {
                 $model = new Model;
                 $model->updateTrackingTimestamp();
             }
         }
     }
+
 
     public function ajaxUpdateTrackingTimestamp()
     {

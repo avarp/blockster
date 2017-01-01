@@ -8,7 +8,6 @@ class Core
     private $eventor;
     private $page;
     private $route = array();
-    private $accessLevel;
 
     private function __clone() {}
     private function __wakeup() {}
@@ -22,6 +21,7 @@ class Core
         return self::$instance;
     }
 
+
     private function __construct()
     {
         $url = $this->prepareUrl($_SERVER['REQUEST_URI']);
@@ -30,13 +30,14 @@ class Core
             die();
         }
         session_start();
-        $this->preparedBlocks = require(__DIR__.'/preparedBlocks.php');
-        $this->router = new \services\router\Router('mainRoutes.php');
+        $this->preparedBlocks = json_decode(file_get_contents(__DIR__.'/preparedBlocks.json'), true);
+        $this->router = new \services\router\Router('mainRoutes.json');
         if ($this->router->getRoute('error404') == false) die('The "error404" route does not exists'); 
         if ($this->router->getRoute('error403') == false) die('The "error403" route does not exists'); 
-        $this->eventor = new \services\eventor\Eventor('mainEvents.php');
+        $this->eventor = new \services\eventor\Eventor('mainEvents.json');
         $this->eventor->fire('onSystemStart');
     }
+
 
     private function prepareUrl($URL)
     {
@@ -50,6 +51,7 @@ class Core
         }
         return $u;
     }
+
 
     private function getText($routeQuery, $useSearch)
     {
@@ -76,11 +78,9 @@ class Core
         return $html;
     }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // retrieving HTML methods
 ////////////////////////////////////////////////////////////////////////////////
-
     public function printPage()
     {
         exit($this->getText($_SERVER['REQUEST_URI'], true));
@@ -121,18 +121,15 @@ class Core
         }
     }
 
-
     public function gotoRoute($routeKey)
     {
         exit($this->getText($routeKey, false));
     }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // loading blocks methods
 ////////////////////////////////////////////////////////////////////////////////
-
     public function executeAction($blockName, $params=array())
     {
         $a = explode('::', $blockName);
@@ -261,7 +258,7 @@ class Core
             return $output;
         }
     }
-
+    
 
     public function fillPosition($posName)
     {

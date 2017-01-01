@@ -1,164 +1,35 @@
-html {
-    font: .8125em "Ubuntu", sans-serif;
+html, body {
+    font: 14px/1.5 sans-serif;
     color: #555;
+    overflow-x: hidden;
 }
-
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
-    margin: 0.25em 0 0.5em;
+    margin: 1em 0 0.5em;
 }
 h1, h2 {font-size: 2rem; color: #08c;}
-h3 {font-size: 1.5rem; color: #000;}
-h4, h5, h6 {font-size: 1rem; color: #000;}
-p {margin: 1em 0;}
-
+h3 {font-size: 1.5rem; color: #555;}
+h4, h5, h6 {font-size: 1rem; color: #555;}
+p {margin: 0.8em 0;}
 a {color: #08c;}
 a:hover {text-decoration: none;}
 a:visited {color: #080;}
-
-label {
-    color: #333;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
-.cell > label {line-height: 2.5em;}
-
 .r {text-align: right;}
 .c {text-align: center;}
-.hidden {display: none;}
-
-#wrap {
-    background-color: #eef4f7;
-}
-
-#header {
-    background-color: #08c;
-    color: #fff;
-    height: 4em;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-    z-index: 10;
-}
-
-#header > .btn-list {
-    float: right;
-    list-style: none
-}
-
-#header > .btn-list > li {
-    float: right;
-}
-
-#header > .btn-list .btn {
-    min-width: 4em;
-    height: 4em;
-    padding: 0;
-    line-height: 4em;
-    color: #fff;
-    box-shadow: none;
-    border: none;
-}
-
-#header > .btn-list .btn:hover {
-    background-color: #0af;
-}
-
-#header > .btn-list .btn[data-number] {
-    position: relative;
-}
-
-#header > .btn-list .btn[data-number]::after {
-    display: block;
-    line-height: 1.5em;
-    padding: 0 0.25em;
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: #8cf;
-    content: attr(data-number);
-}
 
 
-#main {
-    padding: 3em 4em;
-    min-height: calc(100vh - 4em);
-}
-@media (max-width: 768px) {
-    #main {padding: 1em;}
-}
-#main > .section {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
-
-.menu {
-    list-style: none;
-    transition: height 0.3s ease-in-out;
-    overflow: hidden;
-    
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
-}
-@media (min-width: 769px) {
-    .menu {
-        padding-top: 1.5em;
-        min-height: calc(100vh - 4em);
-    }
-}
-@media (max-width: 768px) {
-    .menu.menu > li > a {
-        padding: 1.2em;
-    }
-}
-.menu > li > a {
-    display: block;
-    padding: 0.8em 2em;
-    color: inherit;
-    text-decoration: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    cursor: pointer;
-}
-.menu > li > a > .menu-icon {
-    display: inline-block;
-    vertical-align: middle;
-    width: 2rem;
-    font-size: 1.5em;
-}
-.menu > li > a:hover {
-    color: #000;
-}
-.menu > li > a:hover > .menu-icon {
-    color: #0af;
-}
-.menu > li > a > .submenu-mark {
-    display: inline-block;
-    float: right;
-    line-height: 1.5em;
-    height: 1.5em;
-}
-
-.menu .menu {
-    height: 0;
-    padding: 0;
-    min-height: 0;
-    box-shadow: 0 0 3px rgba(0,0,0,0.35);
-}
 
 /*******************************************************************************
-    MATERIAL DESIGN CARDS
+    MATERIAL CARDS
 *******************************************************************************/
 .card {
-    background-color: #fff;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.35);
     border-radius: 2px;
 }
 .card-header {
     background-color: #08c;
+    border-bottom: 1px solid #07b;
     color: #fff;
     padding: 0.8em 1em;
     font-weight: bold;
@@ -166,11 +37,25 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
 .card-section {
     padding: 1em;
     border-top: 1px solid #e8e8e8;
+    background-color: #fff;
+    overflow: hidden;
 }
 .card-section:first-of-type {
     border: none;
 }
 
+
+
+/*******************************************************************************
+    LABELS
+*******************************************************************************/
+label {
+    color: #333;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.cell > label {line-height: 2.5em;}
 
 
 /*******************************************************************************
@@ -196,9 +81,8 @@ input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
     box-shadow: inset 2px 2px 8px rgba(0,0,0,0.35);
 }
 
-
 .btn.btn-default {color: inherit; background-color: #fff;}
-.btn.btn-default:hover, .btn.btn-default:focus {color: #0af;}
+.btn.btn-default:hover, .btn.btn-default:focus {color: #000;}
 
 .btn.btn-primary {color: #fff; background-color: #08c;}
 .btn.btn-primary:hover, .btn.btn-primary:focus {background-color: #0af;}
@@ -226,13 +110,15 @@ input[type="text"], input[type="password"], select {
     box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
     border-radius: 2px;
 }
-input[type="text"]:focus, input[type="password"]:focus, select:focus {border-color: #0a0;}
+input[type="text"]:focus, input[type="password"]:focus, select:focus {border-color: #0a0;outline:none;}
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAYAAAAbQcSUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AsYCxsIk1VTCgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAACPSURBVCjPlc+9DgFBFAbQsyYkotZINEoVxUpQeHrR8go06BUb8dPsJpOxk6xb3vvNyTcBAUvMcMXb73TJCFhhgwlGuCThJrOuM0Oc8UmxHqroMMcO/QQqozeVzATc8cQUBcZRwzKBjjjg1YYVUcMFttHuUaMxtM9BTTP1N29Jw8E/UIzlwM5QirWBp64QfAE/QSgKP5OaXAAAAABJRU5ErkJggg==');
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 30' height='30' width='18'%3E%3Cpath d='m 3,15 4,4 4,-4' style='fill:none;stroke:%23bbb;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;' /%3E%3C/svg%3E");
     background-position: right center;
     background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
 }
 
 
@@ -253,9 +139,7 @@ textarea {
     border-radius: 2px;
     resize: vertical;
 }
-textarea:focus {
-    border-color: #0b0;
-}
+textarea:focus {border-color: #0b0;outline:none;}
 
 
 
@@ -271,24 +155,21 @@ input[hidden][type="checkbox"] + span, input[hidden][type="radio"] + span {
     background-color: #fff;
     border: 1px solid rgba(0,0,0,0.15);
     box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
-    font: 1rem/1.4em "FontAwesome";
-    color: #08c;    
+    color: #08c;
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;  
 }
 input[hidden][type="checkbox"] + span {border-radius: 2px;}
 input[hidden][type="radio"] + span {border-radius: 50%;}
 
-input[hidden][type="checkbox"] + span::after {
-    content: "";
+input[hidden][type="radio"]:checked + span {
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' height='16' width='16'%3E%3Ccircle r='4' cy='8' cx='8' style='fill:%2308c;stroke:none' /%3E%3C/svg%3E");
 }
-input[hidden][type="radio"] + span::after {
-    content: "";
+input[hidden][type="checkbox"]:checked + span {
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' height='16' width='16'%3E%3Cpath d='m 4,8 3,3 5,-6' style='fill:none;stroke:%2308c;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;' /%3E%3C/svg%3E");
 }
-input[hidden][type="checkbox"]:checked + span::after {
-    content: "\f00c";
-}
-input[hidden][type="radio"]:checked + span::after {
-    content: "\f111";
-}
+input[type="checkbox"], input[type="radio"] {vertical-align: middle;}
 
 
 
@@ -312,26 +193,37 @@ fieldset > legend {
     DISABLED ELEMENTS
 *******************************************************************************/
 fieldset[disabled] > :not(legend) input,
-fieldset[disabled] > :not(legend) input[hidden] + span,
+fieldset[disabled] > :not(legend) input[type="checkbox"] + span,
+fieldset[disabled] > :not(legend) input[type="radio"] + span,
 fieldset[disabled] > :not(legend) textarea,
 fieldset[disabled] > :not(legend) button,
 fieldset[disabled] > :not(legend) select,
 fieldset[disabled] > :not(legend) .btn,
 fieldset[disabled] > input,
-fieldset[disabled] > input[hidden] + span,
+fieldset[disabled] > input[type="checkbox"] + span,
+fieldset[disabled] > input[type="radio"] + span,
 fieldset[disabled] > textarea,
 fieldset[disabled] > button,
 fieldset[disabled] > select,
 fieldset[disabled] > .btn,
 [disabled],
 [disabled]:hover,
-[disabled][hidden] + span
+input[disabled][type="checkbox"] + span,
+input[disabled][type="radio"] + span
 {
     box-shadow: none !important;
     background-color: transparent !important;
     color: rgba(0,0,0,0.2) !important;
     border: 1px solid rgba(0,0,0,0.1) !important;
     cursor: default !important;
+}
+fieldset[disabled] > :not(legend) input[type="checkbox"]:checked + span,
+input[disabled][type="checkbox"]:checked + span {
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' height='16' width='16'%3E%3Cpath d='m 4,8 3,3 5,-6' style='fill:none;stroke:%23bbb;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;' /%3E%3C/svg%3E");
+}
+fieldset[disabled] > :not(legend) input[type="radio"]:checked + span,
+input[disabled][type="radio"]:checked + span {
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' height='16' width='16'%3E%3Ccircle r='4' cy='8' cx='8' style='fill:%23bbb;stroke:none' /%3E%3C/svg%3E");
 }
 
 
@@ -399,7 +291,7 @@ fieldset[disabled] > .btn,
 .alert-info {
     background-color: #adf;
     border-color: #08c;
-    color: #069;
+    color: #07a;
     box-shadow: 0 5px 15px rgba(0,80,120,0.35);
 }
 .alert-info::after {
@@ -410,34 +302,12 @@ fieldset[disabled] > .btn,
 .alert-success {
     background-color: #cfc;
     border-color: #080;
-    color: #060;
+    color: #070;
     box-shadow: 0 5px 15px rgba(0,80,0,0.35);
 }
 .alert-success::after {
     content: "\f058";
     background-color: #080;
-}
-
-
-
-/*******************************************************************************
-    SYSTEM MESSAGE at top of the screen (it disappears via JS when hovering)
-*******************************************************************************/
-.system-message {
-    display: block;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    padding: 2em 0;
-    text-align: center;
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-    opacity: 0;
-    transform: scale(1.5);
-}
-.system-message > .alert {
-    display: inline-block;
 }
 
 
@@ -480,3 +350,9 @@ fieldset[disabled] > .btn,
 .pagination > li:hover > a {
     color: #0af;
 }
+
+
+
+/*******************************************************************************
+    NAVBAR
+********************************************************************************

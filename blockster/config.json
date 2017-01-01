@@ -1,0 +1,8 @@
+{
+	"enabledRenderMethods":[
+        "classicHtml",
+        "scriptsIsLast",
+        "googlePageSpeed"
+    ],
+    "renderMethod":"scriptsIsLast"
+}

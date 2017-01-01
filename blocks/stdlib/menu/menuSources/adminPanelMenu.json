@@ -1,0 +1,58 @@
+[
+    {
+        "label":"Панель управления",
+        "icon":"fa-home",
+        "href":"/admin"
+    },
+    {
+        "label":"Настройка системы",
+        "icon":"fa-cogs",
+        "href":"/admin/settings"
+    },
+    {
+        "label":"База данных",
+        "icon":"fa-database",
+        "href":"/adminer"
+    },
+    {
+        "label":"Пользователи",
+        "icon":"fa-users",
+        "href":"/admin/users"
+    },
+    {
+        "label":"Менеджер меню",
+        "icon":"fa-list",
+        "href":"/admin/menu"
+    },
+    {
+        "label":"Выпадающее меню",
+        "icon":"fa-list",
+        "submenu":[
+            {
+                "label":"Панель управления",
+                "icon":"fa-home",
+                "href":"/admin"
+            },
+            {
+                "label":"Настройка системы",
+                "icon":"fa-cogs",
+                "href":"/admin/settings"
+            },
+            {
+                "label":"База данных",
+                "icon":"fa-database",
+                "href":"/adminer"
+            },
+            {
+                "label":"Пользователи",
+                "icon":"fa-users",
+                "href":"/admin/users"
+            },
+            {
+                "label":"Менеджер меню",
+                "icon":"fa-list",
+                "href":"/admin/menu"
+            }
+        ]
+    }
+]

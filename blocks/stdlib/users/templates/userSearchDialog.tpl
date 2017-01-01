@@ -1,6 +1,6 @@
 <div class="hidden modal-wrap" id="userSearchDialog">
     <form action="<?=$_SERVER['REQUEST_URI']?>" method="POST">
-        <div class="modal card xs-11 sm-10 md-6 lg-4">
+        <div class="modal card xs-11 sm-9 md-7 lg-5 xl-4">
             <div class="card-header">
                 <i class="fa fa-lg fa-filter"></i> Фильтр поиска пользователей
             </div>
@@ -39,7 +39,13 @@
                 </div>
             </div>
             <div class="card-section r">
-                <input type="button" tabindex="-1" class="btn btn-default" data-toggle-dialog="userSearchDialog" value="Отмена">
+                <input
+                    type="button"
+                    tabindex="-1"
+                    class="btn btn-default"
+                    data-wf-actions='{"click":[{"action":"toggleModal","target":"#userSearchDialog"}]}'
+                    value="Отмена"
+                >
                 <?php if ($haveFilter) { ?>
                     <input type="submit" tabindex="-1" class="btn btn-danger" name="dropFilter" value="Сбросить">
                 <?php } ?>
