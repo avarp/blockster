@@ -67,7 +67,20 @@
         "content":{
             "template":"/templates/admin/index.tpl",
             "positions":{
-                "content":[["stdlib/menu", {}, ""]]
+                "content":[["stdlib/menu::actionManager", {}, ""]]
+            },
+            "events":{}
+        }
+    },
+    "admin-menu-editor":{
+        "selector":{
+            "rgxp":"/admin/menu/([^/]+)",
+            "captureGroupNames":["menuName"]
+        },
+        "content":{
+            "template":"/templates/admin/index.tpl",
+            "positions":{
+                "content":[["stdlib/menu::actionEditor", {}, ""]]
             },
             "events":{}
         }

@@ -1,9 +1,18 @@
 html, body {
-	font: 13px/1.5 sans-serif;
+	font-size: 13px;
+    line-height: 1.5;
 }
 
 #wrap {
     background-color: #08c;
+}
+
+#logo {
+    color: #fff;
+    padding: 0.7em;
+    text-align: center;
+    font-style: italic;
+    background: radial-gradient(ellipse at bottom, rgba(255,255,255,0.25) 0%, transparent 70%);
 }
 
 #header {
@@ -13,7 +22,7 @@ html, body {
 
 #header > .btn-list {
     float: right;
-    list-style: none
+    list-style: none;
 }
 
 #header > .btn-list > li {float: right;}
@@ -91,7 +100,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
 }
-.menu > li > a > .menu-icon {
+.menu > li > a > .fa {
     display: inline-block;
     vertical-align: middle;
     width: 2rem;
@@ -118,4 +127,5 @@ html, body {
     bottom: 1em;
     right: 1em;
     z-index: 1000;
+    max-width: calc(100vw - 2em);
 }

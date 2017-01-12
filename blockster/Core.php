@@ -24,14 +24,17 @@ class Core
 
     private function __construct()
     {
-        $url = $this->prepareUrl($_SERVER['REQUEST_URI']);
+        $siteUrl = ((!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://').$_SERVER['HTTP_HOST'].rtrim(INSTALL_URI, '/');
+        define('SITE_URL', $siteUrl);
+
+        $url = $this->cleanUrl($_SERVER['REQUEST_URI']);
         if ($url != '/' && substr($url, -1) == '/') {
-            header('Location: '.substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['REQUEST_URI'])-1), true, 301);
+            header('Location: '.rtrim($_SERVER['REQUEST_URI'], '/'), true, 301);
             die();
         }
         session_start();
         $this->preparedBlocks = json_decode(file_get_contents(__DIR__.'/preparedBlocks.json'), true);
-        $this->router = new \services\router\Router('mainRoutes.json');
+        $this->router = new \services\router\Router('mainMap.json');
         if ($this->router->getRoute('error404') == false) die('The "error404" route does not exists'); 
         if ($this->router->getRoute('error403') == false) die('The "error403" route does not exists'); 
         $this->eventor = new \services\eventor\Eventor('mainEvents.json');
@@ -39,15 +42,13 @@ class Core
     }
 
 
-    private function prepareUrl($URL)
+    private function cleanUrl($u)
     {
-        $u = (!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://';
-        $u .= $_SERVER['HTTP_HOST'].$URL;
         if (false !== $p = strpos($u, '?')) $u = substr($u, 0, $p);
         if (false !== $p = strpos($u, '#')) $u = substr($u, 0, $p);
-        $u = str_replace(SITE_URL, '', $u);
-        if (strpos($u, 'http://') !== false || strpos($u, 'https://') !== false) {
-            die('Constant SITE_URL defined wrong.');
+        if (INSTALL_URI != '/') {
+            $u = substr($u, strlen(INSTALL_URI));
+            if ($u{0} != '/') $u = '/'.$u;
         }
         return $u;
     }
@@ -57,7 +58,7 @@ class Core
     {
         if ($useSearch) {
             // here it is assumed routeQuery contains URL 
-            $this->route = $this->router->findRoute($this->prepareUrl($routeQuery));
+            $this->route = $this->router->findRoute($this->cleanUrl($routeQuery));
         } else {
             // here routeQuery contains key which value is in routes array
             $this->route = $this->router->getRoute($routeQuery);

@@ -22,7 +22,11 @@
 </head>
 <body>
     <div class="grid" id="wrap">
-        <header class="cell xs-12" id="header">
+        <header class="cell lg-3 xl-2 hidden-md-down" id="logo">
+            <img src="<?=SITE_URL?>/templates/admin/images/logo.svg" style="height:2.6em;width:auto;vertical-align:middle">
+            blockster <?=CMS_VERSION?>
+        </header>
+        <header class="cell lg-9 xl-10" id="header">
             <ul class="btn-list">
                 <li>
                     <button
@@ -50,8 +54,8 @@
         <nav class="cell lg-3 xl-2" id="nav">
             <?=block(
                 'stdlib/menu',
-                array('menuName' => 'adminPanelMenu', 'class' => 'menu hidden-md-down', 'id' => 'main-menu'),
-                'adminPanelMenu.tpl'
+                array('menuName' => 'adminPanelMenu'),
+                '/templates/admin/adminPanelMenu.tpl'
             )?>
         </nav>
         <main class="cell lg-9 xl-10" id="main">

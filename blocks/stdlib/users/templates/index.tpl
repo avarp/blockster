@@ -28,7 +28,7 @@ namespace blocks\stdlib\users;
                 Уровень доступа : <?=$u['accessLevel']?><br>
                 Online: <?=($u['isOnline'] == 1 && time() - $u['trackingTimestamp'] < ONLINE_FLAG_LIFETIME) ? 'да' : 'нет'?>
             </div>
-            <div class="card-section r">
+            <div class="card-section">
                 <button
                     type="button"
                     class="btn btn-default"

@@ -1,56 +1,56 @@
 [
     {
         "label":"Панель управления",
-        "icon":"fa-home",
+        "icon":"<i class=\"menu-icon fa fa-home\"></i>",
         "href":"/admin"
     },
     {
         "label":"Настройка системы",
-        "icon":"fa-cogs",
+        "icon":"<i class=\"menu-icon fa fa-cogs\"></i>",
         "href":"/admin/settings"
     },
     {
         "label":"База данных",
-        "icon":"fa-database",
+        "icon":"<i class=\"menu-icon fa fa-database\"></i>",
         "href":"/adminer"
     },
     {
         "label":"Пользователи",
-        "icon":"fa-users",
+        "icon":"<i class=\"menu-icon fa fa-users\"></i>",
         "href":"/admin/users"
     },
     {
         "label":"Менеджер меню",
-        "icon":"fa-list",
+        "icon":"<i class=\"menu-icon fa fa-list\"></i>",
         "href":"/admin/menu"
     },
     {
         "label":"Выпадающее меню",
-        "icon":"fa-list",
+        "icon":"<i class=\"menu-icon fa fa-list\"></i>",
         "submenu":[
             {
                 "label":"Панель управления",
-                "icon":"fa-home",
+                "icon":"<i class=\"menu-icon fa fa-home\"></i>",
                 "href":"/admin"
             },
             {
                 "label":"Настройка системы",
-                "icon":"fa-cogs",
+                "icon":"<i class=\"menu-icon fa fa-cogs\"></i>",
                 "href":"/admin/settings"
             },
             {
                 "label":"База данных",
-                "icon":"fa-database",
+                "icon":"<i class=\"menu-icon fa fa-database\"></i>",
                 "href":"/adminer"
             },
             {
                 "label":"Пользователи",
-                "icon":"fa-users",
+                "icon":"<i class=\"menu-icon fa fa-users\"></i>",
                 "href":"/admin/users"
             },
             {
                 "label":"Менеджер меню",
-                "icon":"fa-list",
+                "icon":"<i class=\"menu-icon fa fa-list\"></i>",
                 "href":"/admin/menu"
             }
         ]
