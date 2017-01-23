@@ -7,7 +7,7 @@ namespace blocks\stdlib\users;
     <button
         type="button"
         class="btn btn-success"
-        data-wf-actions='{"click":[{"action":"toggleModal","target":"#userEditDialog","modalInfo":-1}]}'
+        data-wf-actions='{"click":[{"action":"toggleModal","target":"#userEditDialog","initParams":-1}]}'
     ><i class="fa fa-user-plus"></i> Новый пользователь</button>
     <button
         type="button"
@@ -37,7 +37,7 @@ namespace blocks\stdlib\users;
                             {
                                 "action":"toggleModal",
                                 "target":"#userEditDialog",
-                                "modalInfo":<?=$key?>
+                                "initParams":<?=$key?>
                             }
                         ]
                     }'
@@ -50,7 +50,7 @@ namespace blocks\stdlib\users;
                             {
                                 "action":"toggleModal",
                                 "target":"#userDeleteDialog",
-                                "modalInfo":{
+                                "initParams":{
                                     "uid":<?=$u['id']?>,
                                     "login":"<?=$u['login']?>"
                                 }

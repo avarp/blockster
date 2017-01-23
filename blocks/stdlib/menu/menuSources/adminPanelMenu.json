@@ -20,7 +20,7 @@
         "href":"/admin/users"
     },
     {
-        "label":"Менеджер меню",
+        "label":"Меню",
         "icon":"<i class=\"menu-icon fa fa-list\"></i>",
         "href":"/admin/menu"
     },

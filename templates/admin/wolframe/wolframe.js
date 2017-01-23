@@ -1,4 +1,4 @@
-!function() {
+function Wolframe() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function nodeList2Array(nodeList) {
     var a = new Array()
@@ -11,19 +11,28 @@ function forceRedraw(element) {
     element.offsetHeight
 }
 
+function getElementPos(element) {
+    var relRect = document.documentElement.getBoundingClientRect()
+    var elemRect = element.getBoundingClientRect()
+    return {"left":elemRect.left - relRect.left, "top":elemRect.top - relRect.top}
+}
 
-function manageClass(element, cls, action) {
+var WF = this
+WF.addClass = function(element, cls) {
     var classes = element.className.split(' ')
     var i = classes.indexOf(cls)
-    if (i == -1) { // class is not setted
-        if (action == 'add') {
-            classes.push(cls)
-            element.className = classes.join(' ')
-            return true
-        } else {
-            return false
-        }
-    } else { // class is setted
+    if (i == -1) {
+        classes.push(cls)
+        element.className = classes.join(' ')
+        return true
+    } else {
+        return false
+    }
+}
+WF.removeClass = function(element, cls) {
+    var classes = element.className.split(' ')
+    var i = classes.indexOf(cls)
+    if (i != -1) {
         if (action == 'remove') {
             classes.splice(i, 1)
             element.className = classes.join(' ')
@@ -31,194 +40,251 @@ function manageClass(element, cls, action) {
         } else {
             return false
         }
+    } else {
+        return false
     }
 }
 
-
-function animateHeight(element, duration, action) {
+WF.expandHeight = function(element, duration) {
     if (element.offsetHeight > 0) {
-        if (action == 'collapse') {
-            element.style.height = getComputedStyle(element).height
-            element.style.width = getComputedStyle(element).width
-            element.style.overflow = 'hidden'
-            element.style.transition = 
-            'height '+duration+'ms ease-in-out,'+
-            ' padding-top '+duration+'ms ease-in-out,'+
-            ' padding-bottom '+duration+'ms ease-in-out,'+
-            ' border-top-width '+duration+'ms ease-in-out,'+
-            ' border-bottom-width '+duration+'ms ease-in-out'
-            forceRedraw(element)
-            element.style.height = '0px'
-            element.style.paddingTop = '0px'
-            element.style.paddingBottom = '0px'
-            element.style.borderTopWidth = '0px'
-            element.style.borderBottomWidth = '0px'
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        return false;
     } else {
-        if (action == 'expand') {
-            var expandedDisplay = element.hasAttribute('data-wf-display') ? element.getAttribute('data-wf-display') : 'block'
-            element.style.display = ''
+        var expandedDisplay = element.hasAttribute('data-expanded-display') ? element.getAttribute('data-expanded-display') : 'block'
+        element.style.display = ''
+        if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
+        var h = getComputedStyle(element).height
+        var w = getComputedStyle(element).width
+        var pt = getComputedStyle(element).paddingTop
+        var pb = getComputedStyle(element).paddingBottom
+        var btw = getComputedStyle(element).borderTopWidth
+        var bbw = getComputedStyle(element).borderBottomWidth
+        element.style.height = '0px'
+        element.style.width = w
+        element.style.paddingTop = '0px'
+        element.style.paddingBottom = '0px'
+        element.style.borderTopWidth = '0px'
+        element.style.borderBottomWidth = '0px'
+        element.style.transition = 'none'
+        element.style.overflow = 'hidden'
+        forceRedraw(element)
+        element.style.transition = 
+        'height '+duration+'ms ease-in-out,'+
+        ' padding-top '+duration+'ms ease-in-out,'+
+        ' padding-bottom '+duration+'ms ease-in-out,'+
+        ' border-top-width '+duration+'ms ease-in-out,'+
+        ' border-bottom-width '+duration+'ms ease-in-out'
+        element.style.height = h
+        element.style.paddingTop = pt
+        element.style.paddingBottom = pb
+        element.style.borderTopWidth = btw
+        element.style.borderBottomWidth = bbw
+        setTimeout(function(){
+            element.style.cssText = ''
             if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            var h = getComputedStyle(element).height
-            var w = getComputedStyle(element).width
-            var pt = getComputedStyle(element).paddingTop
-            var pb = getComputedStyle(element).paddingBottom
-            var btw = getComputedStyle(element).borderTopWidth
-            var bbw = getComputedStyle(element).borderBottomWidth
-            element.style.height = '0px'
-            element.style.width = w
-            element.style.paddingTop = '0px'
-            element.style.paddingBottom = '0px'
-            element.style.borderTopWidth = '0px'
-            element.style.borderBottomWidth = '0px'
-            element.style.transition = 'none'
-            element.style.overflow = 'hidden'
-            forceRedraw(element)
-            element.style.transition = 
-            'height '+duration+'ms ease-in-out,'+
-            ' padding-top '+duration+'ms ease-in-out,'+
-            ' padding-bottom '+duration+'ms ease-in-out,'+
-            ' border-top-width '+duration+'ms ease-in-out,'+
-            ' border-bottom-width '+duration+'ms ease-in-out'
-            element.style.height = h
-            element.style.paddingTop = pt
-            element.style.paddingBottom = pb
-            element.style.borderTopWidth = btw
-            element.style.borderBottomWidth = bbw
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        }, duration)
+        return true
+    }
+}
+WF.collapseHeight = function(element, duration) {
+    if (element.offsetHeight > 0) {
+        element.style.height = getComputedStyle(element).height
+        element.style.width = getComputedStyle(element).width
+        element.style.overflow = 'hidden'
+        element.style.transition = 
+        'height '+duration+'ms ease-in-out,'+
+        ' padding-top '+duration+'ms ease-in-out,'+
+        ' padding-bottom '+duration+'ms ease-in-out,'+
+        ' border-top-width '+duration+'ms ease-in-out,'+
+        ' border-bottom-width '+duration+'ms ease-in-out'
+        forceRedraw(element)
+        element.style.height = '0px'
+        element.style.paddingTop = '0px'
+        element.style.paddingBottom = '0px'
+        element.style.borderTopWidth = '0px'
+        element.style.borderBottomWidth = '0px'
+        setTimeout(function(){
+            element.style.cssText = ''
+            if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
+        }, duration)
+        return true
+    } else {
+        return false;
     }
 }
 
-
-function animateWidth(element, duration, action) {
+WF.expandWidth = function(element, duration) {
     if (element.offsetWidth > 0) {
-        if (action == 'collapse') {
-            element.style.height = getComputedStyle(element).height
-            element.style.width = getComputedStyle(element).width
-            element.style.overflow = 'hidden'
-            element.style.transition = 
-            'width '+duration+'ms ease-in-out,'+
-            ' padding-left '+duration+'ms ease-in-out,'+
-            ' padding-right '+duration+'ms ease-in-out,'+
-            ' border-left-width '+duration+'ms ease-in-out,'+
-            ' border-right-width '+duration+'ms ease-in-out'
-            forceRedraw(element)
-            element.style.width = '0px'
-            element.style.paddingLeft = '0px'
-            element.style.paddingRight = '0px'
-            element.style.borderLeftWidth = '0px'
-            element.style.borderRightWidth = '0px'
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        return false
     } else {
-        if (action == 'expand') {
-            var expandedDisplay = element.hasAttribute('data-wf-display') ? element.getAttribute('data-wf-display') : 'block'
-            element.style.display = ''
+        var expandedDisplay = element.hasAttribute('data-expanded-display') ? element.getAttribute('data-expanded-display') : 'block'
+        element.style.display = ''
+        if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
+        var h = getComputedStyle(element).height
+        var w = getComputedStyle(element).width
+        var pl = getComputedStyle(element).paddingLeft
+        var pr = getComputedStyle(element).paddingRight
+        var blw = getComputedStyle(element).borderLeftWidth
+        var brw = getComputedStyle(element).borderRightWidth
+        element.style.height = h
+        element.style.width = '0px'
+        element.style.paddingLeft = '0px'
+        element.style.paddingRight = '0px'
+        element.style.borderLeftWidth = '0px'
+        element.style.borderRightWidth = '0px'
+        element.style.transition = 'none'
+        element.style.overflow = 'hidden'
+        forceRedraw(element)
+        element.style.transition = 
+        'width '+duration+'ms ease-in-out,'+
+        ' padding-left '+duration+'ms ease-in-out,'+
+        ' padding-right '+duration+'ms ease-in-out,'+
+        ' border-left-width '+duration+'ms ease-in-out,'+
+        ' border-right-width '+duration+'ms ease-in-out'
+        element.style.width = w
+        element.style.paddingLeft = pl
+        element.style.paddingRight = pr
+        element.style.borderLeftWidth = blw
+        element.style.borderRightWidth = brw
+        setTimeout(function(){
+            element.style.cssText = ''
             if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            var h = getComputedStyle(element).height
-            var w = getComputedStyle(element).width
-            var pl = getComputedStyle(element).paddingLeft
-            var pr = getComputedStyle(element).paddingRight
-            var blw = getComputedStyle(element).borderLeftWidth
-            var brw = getComputedStyle(element).borderRightWidth
-            element.style.height = h
-            element.style.width = '0px'
-            element.style.paddingLeft = '0px'
-            element.style.paddingRight = '0px'
-            element.style.borderLeftWidth = '0px'
-            element.style.borderRightWidth = '0px'
-            element.style.transition = 'none'
-            element.style.overflow = 'hidden'
-            forceRedraw(element)
-            element.style.transition = 
-            'width '+duration+'ms ease-in-out,'+
-            ' padding-left '+duration+'ms ease-in-out,'+
-            ' padding-right '+duration+'ms ease-in-out,'+
-            ' border-left-width '+duration+'ms ease-in-out,'+
-            ' border-right-width '+duration+'ms ease-in-out'
-            element.style.width = w
-            element.style.paddingLeft = pl
-            element.style.paddingRight = pr
-            element.style.borderLeftWidth = blw
-            element.style.borderRightWidth = brw
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        }, duration)
+        return true
+    }
+}
+WF.collapseWidth = function(element, duration) {
+    if (element.offsetWidth > 0) {
+        element.style.height = getComputedStyle(element).height
+        element.style.width = getComputedStyle(element).width
+        element.style.overflow = 'hidden'
+        element.style.transition = 
+        'width '+duration+'ms ease-in-out,'+
+        ' padding-left '+duration+'ms ease-in-out,'+
+        ' padding-right '+duration+'ms ease-in-out,'+
+        ' border-left-width '+duration+'ms ease-in-out,'+
+        ' border-right-width '+duration+'ms ease-in-out'
+        forceRedraw(element)
+        element.style.width = '0px'
+        element.style.paddingLeft = '0px'
+        element.style.paddingRight = '0px'
+        element.style.borderLeftWidth = '0px'
+        element.style.borderRightWidth = '0px'
+        setTimeout(function(){
+            element.style.cssText = ''
+            if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
+        }, duration)
+        return true
+    } else {
+        return false
     }
 }
 
-
-function animateModal(element, duration, modalInfo, action) {
+WF.showModal = function(element, duration, initParams) {
     if (element.offsetWidth > 0 || element.offsetHeight > 0) {
-        if (action == 'hide') {
-            if (typeof(element.onhide) == 'function') element.onhide(modalInfo)
-            element.style.transition = 'transform '+duration+'ms ease-in-out, opacity '+duration+'ms ease-in-out'
-            forceRedraw(element)
-            element.style.transform = 'scale(1.5)'
-            element.style.opacity = '0'
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        return false
     } else {
-        if (action == 'show') {
-            var expandedDisplay = element.hasAttribute('data-wf-display') ? element.getAttribute('data-wf-display') : 'block'
-            if (typeof(element.onshow) == 'function') element.onshow(modalInfo)
-            element.style.display = ''
+        if (typeof(element.onshow) == 'function' && element.onshow(initParams) === false) return false
+        var expandedDisplay = element.hasAttribute('data-expanded-display') ? element.getAttribute('data-expanded-display') : 'block'
+        element.style.display = ''
+        if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
+        element.style.transform = 'scale(1.5)'
+        element.style.opacity = '0'
+        forceRedraw(element)
+        element.style.transition = 'transform '+duration+'ms ease-in-out, opacity '+duration+'ms ease-in-out'
+        element.style.transform = 'scale(1)'
+        element.style.opacity = '1'
+        setTimeout(function(){
+            element.style.cssText = ''
             if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            element.style.transform = 'scale(1.5)'
-            element.style.opacity = '0'
-            forceRedraw(element)
-            element.style.transition = 'transform '+duration+'ms ease-in-out, opacity '+duration+'ms ease-in-out'
-            element.style.transform = 'scale(1)'
-            element.style.opacity = '1'
-            setTimeout(function(){
-                element.style.cssText = ''
-                if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
-            }, duration)
-            return true
-        } else {
-            return false
-        }
+        }, duration)
+        return true
+    }
+}
+WF.hideModal = function(element, duration) {
+    if (element.offsetWidth > 0 || element.offsetHeight > 0) {
+        if (typeof(element.onhide) == 'function' && element.onhide() === false) return false
+        element.style.transition = 'transform '+duration+'ms ease-in-out, opacity '+duration+'ms ease-in-out'
+        forceRedraw(element)
+        element.style.transform = 'scale(1.5)'
+        element.style.opacity = '0'
+        setTimeout(function(){
+            element.style.cssText = ''
+            if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
+        }, duration)
+        return true
+    } else {
+        return false
     }
 }
 
+WF.showDropdown = function(element, source, duration, initParams) {
+    if (element.offsetWidth > 0 || element.offsetHeight > 0) {
+        return false
+    } else {
+        if (typeof(element.onshow) == 'function' && element.onshow(initParams) === false) return false
+        var expandedDisplay = element.hasAttribute('data-expanded-display') ? element.getAttribute('data-expanded-display') : 'block'
+        element.style.display = ''
+        if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
+        if (element.parentNode == source) {
+            source.style.position = 'relative'
+            element.style.top = getComputedStyle(source).height
+            element.style.left = '0px'
+        } else {
+            var pos = getElementPos(source);
+            element.style.top = (pos.top + source.offsetHeight) + 'px'
+            element.style.left = pos.left + 'px'
+        }
+        var h = element.offsetHeight
+        element.style.transform = 'scale(0)'
+        element.style.transformOrigin = 'left top'
+        forceRedraw(element)
+        element.style.transition = 'transform '+duration+'ms ease-in-out'
+        element.style.transform = 'scale(1)'
+        setTimeout(function(){
+            element.style.display = ''
+            element.style.transform = ''
+            element.style.transformOrigin = ''
+            element.style.transition = ''
+            if (getComputedStyle(element).display == 'none') element.style.setProperty('display', expandedDisplay, 'important')
+        }, duration)
+        if (typeof(WF.hideCurrentDropdown) == 'function') {
+            WF.hideCurrentDropdown()
+            document.body.removeEventListener('click', WF.hideCurrentDropdown)
+        }
+        WF.hideCurrentDropdown = WF.hideDropdown.bind(null, element, source, duration)
+        document.body.addEventListener('click', WF.hideCurrentDropdown, true)
+        return true
+    }
+}
+WF.hideDropdown = function(element, source, duration) {
+    if (typeof(WF.hideCurrentDropdown) == 'function') {
+        document.body.removeEventListener('click', WF.hideCurrentDropdown)
+        WF.hideCurrentDropdown = undefined
+    }
+    if (element.offsetWidth > 0 || element.offsetHeight > 0) {
+        if (typeof(element.onhide) == 'function' && element.onhide() === false) return false
+        element.style.transition = 'transform '+duration+'ms ease-in-out'
+        forceRedraw(element)
+        element.style.transformOrigin = 'left top'
+        element.style.transform = 'scale(0)'
+        setTimeout(function(){
+            element.style.cssText = ''
+            source.style.cssText = ''
+            if (getComputedStyle(element).display != 'none') element.style.setProperty('display', 'none', 'important')
+        }, duration)
+        return true
+    } else {
+        return false
+    }
+}
 
-// event listeners
-var listeners = {
+// volframe event listeners (handlers)
+WF.listeners = {
     'toggleHeight': function(params) {
         var duration = ('duration' in params) ? params.duration : 300
         var inverse = ('inverse' in params)
         var group = ('group' in params) ? document.querySelectorAll(params.group) : []
+        var target
         if ('target' in params) {
             if (typeof(params.target) == 'string') target = document.querySelector(params.target)
             else target = group[params.target]
@@ -227,14 +293,14 @@ var listeners = {
         }
         if (group.length > 0) {
             if (inverse) {
-                animateHeight(target, duration, 'collapse')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateHeight(group[i], duration, 'expand')
+                WF.collapseHeight(target, duration)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.expandHeight(group[i], duration)
             } else {
-                animateHeight(target, duration, 'expand')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateHeight(group[i], duration, 'collapse')
+                WF.expandHeight(target, duration)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.collapseHeight(group[i], duration)
             }
         } else {
-            if (!animateHeight(target, duration, 'expand')) animateHeight(target, duration, 'collapse')
+            if (!WF.expandHeight(target, duration)) WF.collapseHeight(target, duration)
         }
     },
 
@@ -242,6 +308,7 @@ var listeners = {
         var duration = ('duration' in params) ? params.duration : 300
         var inverse = ('inverse' in params)
         var group = ('group' in params) ? document.querySelectorAll(params.group) : []
+        var target
         if ('target' in params) {
             if (typeof(params.target) == 'string') target = document.querySelector(params.target)
             else target = group[params.target]
@@ -250,22 +317,22 @@ var listeners = {
         }
         if (group.length > 0) {
             if (inverse) {
-                animateWidth(target, duration, 'collapse')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateWidth(group[i], duration, 'expand')
+                WF.collapseWidth(target, duration)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.expandWidth(group[i], duration)
             } else {
-                animateWidth(target, duration, 'expand')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateWidth(group[i], duration, 'collapse')
+                WF.expandWidth(target, duration)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.collapseWidth(group[i], duration)
             }
         } else {
-            if (!animateWidth(target, duration, 'expand')) animateWidth(target, duration, 'collapse')
+            if (!WF.expandWidth(target, duration)) WF.collapseWidth(target, duration)
         }
     },
 
     'toggleModal': function(params) {
         var duration = ('duration' in params) ? params.duration : 300
-        var inverse = ('inverse' in params)
-        var modalInfo = ('modalInfo' in params) ? params.modalInfo : null
+        var initParams = ('initParams' in params) ? params.initParams : null
         var group = ('group' in params) ? document.querySelectorAll(params.group) : []
+        var target
         if ('target' in params) {
             if (typeof(params.target) == 'string') target = document.querySelector(params.target)
             else target = group[params.target]
@@ -273,15 +340,12 @@ var listeners = {
             target = this;
         }
         if (group.length > 0) {
-            if (inverse) {
-                animateModal(target, duration, modalInfo, 'hide')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateModal(group[i], duration, modalInfo, 'show')
-            } else {
-                animateModal(target, duration, modalInfo, 'show')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) animateModal(group[i], duration, modalInfo, 'hide')
-            }
+            for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.hideModal(group[i], duration)
+            setTimeout(function() {
+                WF.showModal(target, duration, initParams)
+            }, duration);
         } else {
-            if (!animateModal(target, duration, modalInfo, 'show')) animateModal(target, duration, modalInfo, 'hide')
+            if (!WF.showModal(target, duration, initParams)) WF.hideModal(target, duration)
         }
     },
 
@@ -289,6 +353,7 @@ var listeners = {
         if ('class' in params) var cls = params['class']; else return;
         var inverse = ('inverse' in params)
         var group = ('group' in params) ? document.querySelectorAll(params.group) : []
+        var target
         if ('target' in params) {
             if (typeof(params.target) == 'string') target = document.querySelector(params.target)
             else target = group[params.target]
@@ -297,15 +362,23 @@ var listeners = {
         }
         if (group.length > 0) {
             if (inverse) {
-                manageClass(target, cls, 'remove')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) manageClass(group[i], cls, 'add')
+                WF.removeClass(target, cls)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.addClass(group[i], cls)
             } else {
-                manageClass(target, cls, 'add')
-                for (i=0, l=group.length; i<l; i++) if (group[i] != target) manageClass(group[i], cls, 'remove')
+                WF.addClass(target, cls)
+                for (i=0, l=group.length; i<l; i++) if (group[i] != target) WF.removeClass(group[i], cls)
             }
         } else {
-            if (!manageClass(target, cls, 'add')) manageClass(target, cls, 'remove')
+            if (!WF.addClass(target, cls)) WF.removeClass(target, cls)
         }
+    },
+
+    'showDropdown': function(params) {
+        var source = ('source' in params) ? document.querySelector(params.source) : this
+        var target = ('target' in params) ? document.querySelector(params.target) : this.firstElementChild
+        var initParams = ('initParams' in params) ? params.initParams : null
+        var duration = ('duration' in params) ? params.duration : 150
+        if (!WF.showDropdown(target, source, duration, initParams)) WF.hideDropdown(target, source, duration)
     }
 }
 
@@ -327,11 +400,12 @@ window.addEventListener('load', function() {
             actions = tasklist[event]
             for (i=0, l=actions.length; i<l; i++) {
                 a = actions[i]
-                element.addEventListener(event, listeners[a.action].bind(element, a))
+                element.addEventListener(event, WF.listeners[a.action].bind(element, a))
             }
         }
     })
-    console.log('Wolframe v0.2 is started')
+    console.log('Wolframe v0.3 is started');
 })
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-}()
+}
+var wolframe = new Wolframe();

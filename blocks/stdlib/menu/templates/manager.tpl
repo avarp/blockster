@@ -13,7 +13,7 @@
             <div class="card-header">
                 <i class="fa fa-list"></i> <?=$m?>
             </div>
-            <div class="card-section">
+            <div class="card-section c">
                 <a href="<?=$_SERVER['REQUEST_URI']?>/<?=$m?>" class="btn btn-default">Изменить</a>
                 <button
                     type="button"
@@ -23,7 +23,7 @@
                             {
                                 "action":"toggleModal",
                                 "target":"#deleteMenuDialog",
-                                "modalInfo":"<?=$m?>"
+                                "initParams":"<?=$m?>"
                             }
                         ]
                     }'
