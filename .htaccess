@@ -6,12 +6,15 @@ DirectorySlash off
 <IfModule mod_rewrite.c>
     RewriteEngine on
 
-    # redirect www.example.com -> example.com
+    # redirect www.example.com to example.com
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
 
-    # redirect all requests (and *.php, *.tpl, *.json, *.sqlite files) to index.php
+    # if requested *.php, *.tpl, *.json, *.sqlite
     RewriteCond %{REQUEST_URI} (.sqlite|.php|.tpl|.json)$ [OR]
+    # or if file not exists
     RewriteCond %{REQUEST_FILENAME} !-f
+    # then redirect to index.php
     RewriteRule ^ index.php [L]
+    # otherwise send requested file
 </IfModule>

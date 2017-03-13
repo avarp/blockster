@@ -131,36 +131,6 @@ class Core
 ////////////////////////////////////////////////////////////////////////////////
 // loading blocks methods
 ////////////////////////////////////////////////////////////////////////////////
-    public function executeAction($blockName, $params=array())
-    {
-        $a = explode('::', $blockName);
-        $blockDir = '/blocks/'.$a[0];
-        $action = isset($a[1])? $a[1] : 'actionIndex';
-        $namespace = str_replace('/', '\\', $blockDir);
-        $controllerClass = $namespace.'\\Controller';
-
-        if (!class_exists($controllerClass)) {
-            trigger_error('The Controller class not defined for block "'.$blockName.'"' , E_USER_WARNING);
-            return false;
-        }
-
-        if (!method_exists($controllerClass, $action)) {
-            trigger_error('The '.$action.' method not defined in Controller class of block "'.$blockName.'"' , E_USER_WARNING);
-            return false;
-        }
-
-        $modelClass = $namespace.'\\Model';
-        $model = class_exists($modelClass) ? new $modelClass() : null;
-
-        $controller = new $controllerClass(null, $model);
-        $output = $controller->$action($params);
-
-        $model = null;
-        $controller = null;
-
-        return $output;
-    }
-
 
     public function loadBlock($blockName, $params=array(), $imposedTemplate='')
     {

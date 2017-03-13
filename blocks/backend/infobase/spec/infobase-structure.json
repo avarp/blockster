@@ -1,0 +1,50 @@
+{
+    "infobases":{
+        "isRoot":true,
+        "fields":{
+            "url":{
+                "type":"string",
+                "required":true,
+                "label":"Системное имя",
+                "error":"Системное имя должно быть заполнено. Оно может содержать только символы латинского алфавита (не более 32 символов).",
+                "max":32,
+                "pattern":"/^[a-zA-Z0-9_]+$/"
+            },
+            "name":{
+                "type":"string",
+                "required":true,
+                "label":"Название",
+                "error":"Название инфобазы должно быть заполнено (не более 100 символов).",
+                "max":100
+            },
+            "prefix":{
+                "type":"string",
+                "label":"Префикс таблиц",
+                "error":"Префикс таблиц должен состоять только из латинских символов (не более 8).",
+                "max":8,
+                "pattern":"/^[a-zA-Z_]+$/"
+            },
+            "description":{
+                "type":"code",
+                "syntax":"html-wysiwyg",
+                "label":"Описание"
+            },
+            "structure":{
+                "type":"code",
+                "syntax":"json",
+                "required":true,
+                "error":"Структура инфобазы не указана.",
+                "label":"Структура инфобазы"
+            },
+            "changeAccessLevel":{
+                "type":"integer"
+            },
+            "readAccessLevel":{
+                "type":"integer"
+            }
+        },
+        "onCheck":"\\blocks\\backend\\infobase\\Controller::checkInfobaseRecord",
+        "onSave":"\\blocks\\backend\\infobase\\Model::createInfobase",
+        "onDelete":"\\blocks\\backend\\infobase\\Model::purgeInfobase"
+    } 
+}

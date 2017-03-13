@@ -13,12 +13,6 @@ class Eventor
         $this->events = json_decode(file_get_contents($this->eventsFile), true);
     }
 
-    public function fixState()
-    {
-        $content = '<?php return '.var_export($this->events, true).';';
-        file_put_contents($this->eventsFile, $content);
-    }
-
     public function addEvent($event)
     {
         if (!isset($this->events[$event])) {

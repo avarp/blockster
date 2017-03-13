@@ -13,7 +13,7 @@ if (get_magic_quotes_gpc() || get_magic_quotes_runtime()) {
     $errors[] = 'Директива "magic_quotes" включена. Выключите её.';
 }
 
-if (file_exists('environmentBackup.local.php')) require('environmentBackup.local.php');
+if (file_exists('envbackup.local.php')) require('envbackup.local.php');
 $siteName = isset($_POST['siteName']) ? $_POST['siteName'] : (defined('SITE_NAME') ? SITE_NAME : 'The Site');
 $installUri = isset($_POST['installUri']) ? $_POST['installUri'] : $_SERVER['REQUEST_URI'];
 $hostUrl = ((!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://').$_SERVER['HTTP_HOST'];
@@ -48,12 +48,12 @@ if (strpos($installUri, '?') !== false) {
 }
 
 if (isset($_POST['install']) && empty($errors)) {
-    if (file_exists('environmentBackup.local.php')) {
-        $env = file_get_contents('environmentBackup.local.php');
+    if (file_exists('envbackup.local.php')) {
+        $env = file_get_contents('envbackup.local.php');
         $env = preg_replace('/define[^;]+?INSTALL_URI[^;]+?;/', "define('INSTALL_URI','$installUri');", $env);
         $env = preg_replace('/define[^;]+?SITE_NAME[^;]+?;/', "define('SITE_NAME','".str_replace("'", "\\'", $siteName)."');\n", $env);
         file_put_contents('environment.local.php', $env);
-        unlink('environmentBackup.local.php');
+        unlink('envbackup.local.php');
     } else {
         file_put_contents('environment.local.php',
             "<?php\n".
@@ -65,5 +65,5 @@ if (isset($_POST['install']) && empty($errors)) {
     die();
 }
 
-require('templates/admin/install.tpl');
+require('templates/backend/install.tpl');
 die();

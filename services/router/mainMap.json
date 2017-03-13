@@ -1,14 +1,14 @@
 {
     "error404":{
         "content":{
-            "template":"/templates/default/404.tpl",
+            "template":"/templates/frontend/404.tpl",
             "positions":{},
             "events":{}
         }
     },
     "error403":{
         "content":{
-            "template":"/templates/admin/auth.tpl",
+            "template":"/templates/backend/auth.tpl",
             "positions":{},
             "events":{}
         }
@@ -19,68 +19,19 @@
             "captureGroupNames":["blockName"]
         },
         "content":{
-            "template":"/templates/admin/ajax.tpl",
+            "template":"/templates/backend/ajax.tpl",
             "positions":{},
             "events":{}
         }
     },
-    "admin":{
+    "admin-homepage":{
         "selector":{
             "rgxp":"/admin"
         },
         "content":{
-            "template":"/templates/admin/index.tpl",
+            "template":"/templates/backend/index.tpl",
             "positions":{
-                "content":[["stdlib/admin", {}, ""]]
-            },
-            "events":{}
-        }
-    },
-    "admin-settings":{
-        "selector":{
-            "rgxp":"/admin/settings"
-        },
-        "content":{
-            "template":"/templates/admin/index.tpl",
-            "positions":{
-                "content":[["stdlib/admin::actionSettings", {}, ""]]
-            },
-            "events":{}
-        }
-    },
-    "admin-users":{
-        "selector":{
-            "rgxp":"/admin/users"
-        },
-        "content":{
-            "template":"/templates/admin/index.tpl",
-            "positions":{
-                "content":[["stdlib/users", {}, ""]]
-            },
-            "events":{}
-        }
-    },
-    "admin-menu":{
-        "selector":{
-            "rgxp":"/admin/menu"
-        },
-        "content":{
-            "template":"/templates/admin/index.tpl",
-            "positions":{
-                "content":[["stdlib/menu::actionManager", {}, ""]]
-            },
-            "events":{}
-        }
-    },
-    "admin-menu-editor":{
-        "selector":{
-            "rgxp":"/admin/menu/([^/]+)",
-            "captureGroupNames":["menuName"]
-        },
-        "content":{
-            "template":"/templates/admin/index.tpl",
-            "positions":{
-                "content":[["stdlib/menu::actionEditor", {}, ""]]
+                "content":[["backend/settings", {}, ""]]
             },
             "events":{}
         }
@@ -90,17 +41,56 @@
             "rgxp":"/adminer"
         },
         "content":{
-            "template":"/templates/admin/adminer.php",
+            "template":"/templates/backend/adminer.php",
             "positions":{},
             "events":{}
         }
     },
-    "main-page":{
+    "infobase-index":{
+        "selector":{
+            "rgxp":"/admin/content/([^/]+)(?:/([^/]+)-([0-9]+))?",
+            "captureGroupNames":["basename", "objType", "objId"]
+        },
+        "content":{
+            "template":"/templates/backend/index.tpl",
+            "positions":{
+                "content":[["backend/infobase", {}, ""]]
+            },
+            "events":{}
+        }
+    },
+    "infobase-editor":{
+        "selector":{
+            "rgxp":"/admin/content/([^/]+)/edit/([^/]+)-([0-9]+)",
+            "captureGroupNames":["basename", "objType", "objId"]
+        },
+        "content":{
+            "template":"/templates/backend/index.tpl",
+            "positions":{
+                "content":[["backend/infobase::actionEdit", {}, ""]]
+            },
+            "events":{}
+        }
+    },
+    "infobase-new-object":{
+        "selector":{
+            "rgxp":"/admin/content/([^/]+)/new-([^/]+)(?:/([^/]+)-([0-9]+))?",
+            "captureGroupNames":["basename", "objType", "parentObjType", "parentId"]
+        },
+        "content":{
+            "template":"/templates/backend/index.tpl",
+            "positions":{
+                "content":[["backend/infobase::actionCreate", {}, ""]]
+            },
+            "events":{}
+        }
+    },
+    "public-page":{
         "selector":{
             "rgxp":"/"
         },
         "content":{
-            "template":"/templates/default/index.tpl",
+            "template":"/templates/frontend/index.tpl",
             "positions":{},
             "events":{}
         }

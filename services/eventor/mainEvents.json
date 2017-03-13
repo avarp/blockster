@@ -1,5 +1,1 @@
-{
-    "onPageCreated":[
-        "\\blocks\\stdlib\\users\\Controller::addTrackingScript"
-    ]
-}
+{}
