@@ -91,6 +91,7 @@ _Инфобаза_ это блок, который является надстр
 
 атрибуты:
  - **syntax** html | html-wysiwyg | javascript | php | css | json
+ - [**multiline**] true | false || true
  - [**initial**] значение, присваиваемое при создании записи || ""
  - [**required**] обязательное или нет || false
  - [**error**] сообщение об ошибке || ""

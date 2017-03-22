@@ -48,7 +48,7 @@
     },
     "infobase-index":{
         "selector":{
-            "rgxp":"/admin/content/([^/]+)(?:/([^/]+)-([0-9]+))?",
+            "rgxp":"/content/([^/]+)(?:/([^/]+)-([0-9]+))?",
             "captureGroupNames":["basename", "objType", "objId"]
         },
         "content":{
@@ -61,7 +61,7 @@
     },
     "infobase-editor":{
         "selector":{
-            "rgxp":"/admin/content/([^/]+)/edit/([^/]+)-([0-9]+)",
+            "rgxp":"/content/([^/]+)/edit/([^/]+)-([0-9]+)",
             "captureGroupNames":["basename", "objType", "objId"]
         },
         "content":{
@@ -74,7 +74,7 @@
     },
     "infobase-new-object":{
         "selector":{
-            "rgxp":"/admin/content/([^/]+)/new-([^/]+)(?:/([^/]+)-([0-9]+))?",
+            "rgxp":"/content/([^/]+)/new-([^/]+)(?:/([^/]+)-([0-9]+))?",
             "captureGroupNames":["basename", "objType", "parentObjType", "parentId"]
         },
         "content":{

@@ -2,7 +2,7 @@
 namespace blocks\frontend\users;
 const ONLINE_FLAG_LIFETIME = 900;//15 min
 
-class Controller extends \proto\Controller
+class Controller extends \blockster\Controller
 {
     public function actionIndex()
     {

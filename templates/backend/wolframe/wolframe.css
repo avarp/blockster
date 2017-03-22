@@ -163,6 +163,9 @@ label {
     box-shadow: 0 1px 5px rgba(0,0,0,0.35);
     border-radius: 2px;
 }
+a.btn:hover {
+    text-decoration: none;
+}
 @media (max-width: 992px) {
     .btn {min-width: 2.5em;}
 }

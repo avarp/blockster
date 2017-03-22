@@ -6,7 +6,7 @@
 
         <button class="btn btn-default"><i class="fa fa-copy"></i><span class="hidden-sm-down"> Копировать</span></button>
         <button class="btn btn-default"><i class="fa fa-cut"></i><span class="hidden-sm-down"> Вырезать</span></button>
-        <button class="btn btn-default"><i class="fa fa-level-down"></i><span class="hidden-sm-down"> Вставить</span></button>
+        <button class="btn btn-default" disabled><i class="fa fa-level-down"></i><span class="hidden-sm-down"> Вставить</span></button>
 
         <button class="btn btn-default"><i class="fa fa-filter"></i><span class="hidden-sm-down"> Фильтр</span></button>
         <button class="btn btn-default"><i class="fa fa-sliders"></i><span class="hidden-sm-down"> Вид</span></button>

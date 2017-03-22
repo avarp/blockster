@@ -1,6 +1,5 @@
 <?php
 namespace blockster;
-
 class Core
 {
     private $preparedBlocks;
@@ -21,7 +20,6 @@ class Core
         return self::$instance;
     }
 
-
     private function __construct()
     {
         $siteUrl = ((!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://').$_SERVER['HTTP_HOST'].rtrim(INSTALL_URI, '/');
@@ -41,7 +39,6 @@ class Core
         $this->eventor->fire('onSystemStart');
     }
 
-
     private function cleanUrl($u)
     {
         if (false !== $p = strpos($u, '?')) $u = substr($u, 0, $p);
@@ -52,7 +49,6 @@ class Core
         }
         return $u;
     }
-
 
     private function getText($routeQuery, $useSearch)
     {
@@ -87,7 +83,6 @@ class Core
         exit($this->getText($_SERVER['REQUEST_URI'], true));
     }
 
-
     public function error404()
     {
         $sapiName = php_sapi_name();
@@ -99,7 +94,6 @@ class Core
         exit($this->getText('error404', false));
     }
 
-
     public function error403()
     {
         $sapiName = php_sapi_name();
@@ -110,7 +104,6 @@ class Core
         }
         exit($this->getText('error403', false));
     }
-
 
     public function redirect($URL, $useHeader=true)
     {
@@ -127,10 +120,11 @@ class Core
         exit($this->getText($routeKey, false));
     }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // loading blocks methods
 ////////////////////////////////////////////////////////////////////////////////
+
+    protected $loadedModels = array();
 
     public function loadBlock($blockName, $params=array(), $imposedTemplate='')
     {
@@ -140,7 +134,7 @@ class Core
 
         $a = explode('::', $blockName);
         $blockDir = '/blocks/'.$a[0];
-        $cacheDir = '/cache/'.$a[0];
+        $cacheDir = '/blockster/cache/'.$a[0];
         $action = isset($a[1])? $a[1] : 'actionIndex';
         $namespace = str_replace('/', '\\', $blockDir);
         $controllerClass = $namespace.'\\Controller';
@@ -188,11 +182,17 @@ class Core
         //execute module
         if (!isset($output)) {
             $viewClass = $namespace.'\\View';
-            if (!class_exists($viewClass)) $viewClass = '\\proto\\View';
+            if (!class_exists($viewClass)) $viewClass = '\\blockster\\View';
             $view = new $viewClass($blockDir.'/templates', $imposedTemplate);
             
             $modelClass = $namespace.'\\Model';
-            $model = class_exists($modelClass) ? new $modelClass() : null;
+            if (isset($this->loadedModels[$modelClass])) {
+                $model = $this->loadedModels[$modelClass];
+            } elseif (class_exists($modelClass)) {
+                $model = $this->loadedModels[$modelClass] = new $modelClass();
+            } else {
+                $model = null;
+            }
 
             $controller = new $controllerClass($view, $model);
             $output = $controller->$action($params);
@@ -228,8 +228,7 @@ class Core
         } else {
             return $output;
         }
-    }
-    
+    }  
 
     public function fillPosition($posName)
     {

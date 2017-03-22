@@ -1,7 +1,7 @@
 <?php
 namespace blocks\pagination;
 
-class Controller extends \proto\Controller
+class Controller extends \blockster\Controller
 {
     public function actionIndex($params)
     {

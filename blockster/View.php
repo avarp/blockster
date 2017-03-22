@@ -1,5 +1,5 @@
 <?php
-namespace proto;
+namespace blockster;
 
 class View
 {

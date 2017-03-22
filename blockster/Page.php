@@ -1,7 +1,7 @@
 <?php
 namespace blockster;
 
-class Page extends \proto\View
+class Page extends \blockster\View
 {
     public function __construct($template)
     {

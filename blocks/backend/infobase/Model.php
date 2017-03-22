@@ -152,7 +152,6 @@ class Model
                 $this->adjustPublicationDateOfChilds($record);
             }
         }
-
         return $record;
     }
 
@@ -290,5 +289,15 @@ class Model
     public function adjustPublicationDateOfChilds($record)
     {
         //корректировка даты публикации у вложенных записей
+    }
+
+    public static function createInfobase($structure)
+    {
+        return $structure;
+    }
+
+    public static function purgeInfobase($structure)
+    {
+        return array();
     }
 }

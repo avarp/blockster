@@ -1,6 +1,7 @@
 {
     "infobases":{
         "isRoot":true,
+        "name":"Инфобазы",
         "fields":{
             "url":{
                 "type":"string",
@@ -26,7 +27,7 @@
             },
             "description":{
                 "type":"code",
-                "syntax":"html-wysiwyg",
+                "syntax":"html",
                 "label":"Описание"
             },
             "structure":{

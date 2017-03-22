@@ -1,7 +1,7 @@
 <?php
 namespace blocks\backend\infobase;
 
-class Controller extends \proto\Controller
+class Controller extends \blockster\Controller
 {
     protected $structure = array();
     protected $info = array();
@@ -11,18 +11,37 @@ class Controller extends \proto\Controller
         $this->view = $view;
         $this->model = $model;
         $this->structure = $model->getStructure();
+        if (empty($this->structure)) \blockster\Core::getInstance()->error404();
         $this->info = $model->getInfo();
         restrictAccessLevel($this->info['readAccessLevel']);
         $this->isReadOnly = !checkAccessLevel($this->info['changeAccessLevel']);
     }
+
+
+
 
     public function actionIndex()
     {
         return $this->view->render();
     }
 
-    public function actionShowTable()
+
+
+
+    public function actionShowTable($params)
     {
+        /**
+        * $params['table'] - таблица, которую надо показать
+        * $params['page'] - страница, которую надо показать
+        * $params['itemsOnPage'] - кол-во записей на страницу
+        * $params['orderBy'] - сортировка
+        * $params['filter'] - фильтр
+        *
+        * команды:
+        * $_POST['deleteRecords'] - удалить записи
+        * $_POST['pasteRecords'] - вставить записи
+        * $_POST['recordsList'] - список идентификаторов для выполнения команды
+        */
         $this->view->setTemplate('table.tpl');
         return $this->view->render();
     }
@@ -241,5 +260,10 @@ class Controller extends \proto\Controller
             }
         }
         return $errors;
+    }
+
+    public static function checkInfobaseRecord($structure)
+    {
+        return array();
     }
 }

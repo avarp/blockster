@@ -22,26 +22,33 @@
 </head>
 <body>
     <div class="grid padding-1" id="wrap">
-        <header class="cell xs-12">
-            <div id="header">
-                <div class="logo">
-                    <img src="<?=SITE_URL?>/templates/backend/images/logo.svg">
-                    Blockster <sup>v<?=CMS_VERSION?></sup>
-                </div>
-                <div class="logo">
-                    <img src="<?=SITE_URL?>/templates/backend/images/logo.svg">
-                    Blockster <sup>v<?=CMS_VERSION?></sup>
-                </div>
-                <div class="logo">
-                    <img src="<?=SITE_URL?>/templates/backend/images/logo.svg">
-                    Blockster <sup>v<?=CMS_VERSION?></sup>
-                </div>
+        <header class="cell lg-3 xl-2 hidden-md-down">
+            <div class="logo">
+                <img src="<?=SITE_URL?>/templates/backend/images/logo.svg">
+                Blockster <sup>v<?=CMS_VERSION?></sup>
             </div>
         </header>
-        <nav class="cell lg-3 xl-2" id="nav">
+        <header class="cell lg-9 xl-10 header-buttons">
+            <a href="<?=SITE_URL?>/admin/infobase/users/users-<?=$_SESSION['user']['id']?>" class="header-btn" target="_blank" title="Вы вошли как <?=$_SESSION['user']['login']?>. Открыть профиль пользователя.">
+                <i class="fa fa-id-card"></i>
+            </a>
+            <form method="POST">
+                <button type="submit" name="logOut" class="header-btn" title="Выйти"><i class="fa fa-sign-out"></i></button>
+            </form>
+            <a href="<?=SITE_URL?>" class="header-btn" target="_blank" title="Открыть сайт">
+                <i class="fa fa-globe"></i>
+            </a>
+            <button
+                class="header-btn hidden-md-up"
+                data-wf-actions='{"click":[{"action":"toggleHeight", "target":"#adminMenu"}]}'>
+                <i class="fa fa-bars"></i>
+            </button>
+        </header>
+        <nav class="cell lg-3 xl-2 hidden-md-down" id="adminMenu">
             <ul class="menu">
-                <li><a href=""><i class="fa fa-dashboard"></i>Панель управления</a></li>
-                <li><a href=""><i class="fa fa-dashboard"></i>Панель управления</a></li>
+                <li><a href="<?=SITE_URL?>/admin"><i class="fa fa-cogs"></i>Панель управления</a></li>
+                <li><a href="<?=SITE_URL?>/content/infobases"><i class="fa fa-table"></i>Инфобазы</a></li>
+                <li><a href="<?=SITE_URL?>/adminer"><i class="fa fa-database"></i>Adminer</a></li>
             </ul>
         </nav>
         <main class="cell lg-9 xl-10" id="main">
