@@ -3,9 +3,14 @@ namespace services\database;
 
 class Database extends \PDO
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct('sqlite:'.__DIR__.'/db.sqlite');
+    }
+
+    public function getDriverName()
+    {
+        return 'sqlite';
     }
 
     public function table($sql, $array=array())

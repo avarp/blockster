@@ -28,7 +28,7 @@ class Eventor
         unset($this->events[$event]);
     }
 
-    public function mergeEvents($events) {
+    public function addEvents($events) {
         foreach ($events as $event) {
             if (isset($this->events[$event])) {
                 foreach ($event as $handler) $this->events[$event][] = $handler;
@@ -71,6 +71,9 @@ class Eventor
                 $class = $handler[0];
                 $method = $handler[1];
                 $class::$method($params);
+            } elseif (function_exists($handler[0])) {
+                $function = $handler[0];
+                $function($params);
             }
         }
     }

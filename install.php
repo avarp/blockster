@@ -1,16 +1,16 @@
 <?php
 $errors = array();
-if (PHP_VERSION_ID < 50200) $errors[] = 'Необходима версия PHP 5.3.0 или выше.';
+if (PHP_VERSION_ID < 50200) $errors[] = 'Blockster requires PHP 5.3.0 or greater.';
 
 $installedExtensions = get_loaded_extensions();
 $requiredExtensions = array('sqlite3', 'PDO', 'curl', 'pdo_sqlite', 'zip' ,'gd' ,'mbstring');
 $notInstalledExtensions = array_diff($requiredExtensions, $installedExtensions);
 if (!empty($notInstalledExtensions)) {
-    $errors[] = 'Необходимые расширения PHP не установлены: '.implode(', ', $notInstalledExtensions).'.';
+    $errors[] = 'Blockster requires PHP extensions: '.implode(', ', $notInstalledExtensions).'.';
 }
 
 if (get_magic_quotes_gpc() || get_magic_quotes_runtime()) {
-    $errors[] = 'Директива "magic_quotes" включена. Выключите её.';
+    $errors[] = 'Directive "magic_quotes" is enabled. Please disable it.';
 }
 
 if (file_exists('envbackup.local.php')) require('envbackup.local.php');
@@ -22,13 +22,13 @@ if (empty($siteName)) $errors[] = 'Имя сайта не указано.';
 if (empty($installUri)) $installUri = '/';
 
 if (strpos($installUri, '?') !== false) {
-    $errors[] = 'Указанный адрес для установки содержит GET параметры.';
+    $errors[] = 'Wrong URL. You specified URL that contains GET parameters.';
 } else {
-    /* Проверка installUri - указывает ли он на папку, в которую устанавливается проект.
-    #1 Создаем в корне проекта тестовый файл с текстом
-    #2 Затем запрашиваем его по HTTP, используя installUri и GET-параметр, который в случае неверного installUri предотвратит рекурсию. Если файла по запрошенному URL не будет, .htaccess редиректит нас на index.php и оттуда на install.php, но т.к. мы использовали GET-параметр, то в данный блок else мы не попадем. Т.е. file_get_contents вместо искомого файла вернет HTML формы установки.
-    #3 Проверяем полученный текст на соответствие заданному. Если не соответствует, выводим ошибки.
-    #4 Удаляем тестовый файл
+    /* Check installUri - is it points to directory in whish we install Blockster?
+    #1 Create txt file in root directory of installation
+    #2 Retrieve them using installUri and GET-parameter. If installUri is wrong, .htaccess will redirects us back to this script, and we get a recursion. To prevent it we use GET-parameter (potential recursion is brokes at line 24 of this script).
+    #3 Check content of retrieved file. If it is wrong, display error.
+    #4 Delete file.
     */
     $key = time();
     #1
@@ -38,9 +38,9 @@ if (strpos($installUri, '?') !== false) {
     if (file_get_contents($url) != $key) {
         #3
         if ($_SERVER['DOCUMENT_ROOT'] != ROOT_DIR) {
-            $errors[] = 'Указанный адрес для установки неверный. Вы пытаетесь установить CMS не в корневую папку хоста, поэтому адрес должен указывать на саму подпапку.';
+            $errors[] = 'Wrong URL. You attempted to install Blockster into subfolder of your host. So URL must point to it.';
         } else {
-            $errors[] = 'Указанный адрес для установки неверный. Вы пытаетесь установить CMS в корневую папку хоста, поэтому адрес должен быть пустым или "/".';
+            $errors[] = 'Wrong URL. You attempted to install Blockster into subfolder of your host. Try empty value or "/".';
         }
     }
     #4
@@ -57,13 +57,14 @@ if (isset($_POST['install']) && empty($errors)) {
     } else {
         file_put_contents('environment.local.php',
             "<?php\n".
-            "define('INSTALL_URI','$installUri');\n".
-            "define('SITE_NAME','".str_replace("'", "\\'", $siteName)."');\n"
+            "define('INSTALL_URI', '$installUri');\n".
+            "define('SITE_NAME', '".str_replace("'", "\\'", $siteName)."');\n".
+            "define('SITE_THEME', 'default');"
         );
     }
     header('Location: '.$installUri);
     die();
 }
 
-require('templates/backend/install.tpl');
+require('themes/admin/install.tpl');
 die();
