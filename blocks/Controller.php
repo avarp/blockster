@@ -5,14 +5,10 @@ class Controller
 {
     protected $view;
     protected $model;
-    protected $parent;
-    protected $page;
 
-    public function __construct($view, $model, $parent, $page)
+    public function __construct($view, $model)
     {
         $this->view = $view;
         $this->model = $model;
-        $this->parent = $parent;
-    	$this->page = $page;
     }
 }

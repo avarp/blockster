@@ -9,10 +9,10 @@
     );
     $this->data['title'] = 'Доступ ограничен';
     $this->data['cssFiles'] = array(
-        '/themes/admin/assets/flexbox-grid.css',
-        '/themes/admin/assets/elements.css',
-        '/themes/admin/style.css',
-        '/themes/admin/assets/font-awesome/css/font-awesome.min.css'
+        '/themes/admin/page/assets/flexbox-grid.css',
+        '/themes/admin/page/assets/ui-elements.css',
+        '/themes/admin/page/style.css',
+        '/themes/admin/page/assets/font-awesome/css/font-awesome.min.css'
     );
     $this->head();
 ?>

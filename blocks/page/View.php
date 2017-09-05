@@ -4,7 +4,7 @@ namespace blocks\page;
 class View extends \blocks\View
 {
 	public $data = array(
-		'title' => 'Blockster page',
+		'title' => 'Untitled',
 		'keywords' => '',
 		'description' => '',
 		'cssText' => '',

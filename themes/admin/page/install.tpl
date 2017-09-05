@@ -7,8 +7,7 @@
     <title>Установка Blockster</title>
     <style>
         <?=file_get_contents(__DIR__.'/assets/flexbox-grid.css')?>
-        <?=file_get_contents(__DIR__.'/assets/elements.css')?>
-        html, body {font-size: 13px;}
+        <?=file_get_contents(__DIR__.'/assets/ui-elements.css')?>
     </style>
 </head>
 <body>
@@ -16,7 +15,7 @@
     <div class="modal-wrap">
         <div class="modal card xs-11 sm-10 md-6 lg-4">
             <div class="card-header">
-                Установка CMS Blockster v<?=CMS_VERSION?>
+                <div class="modal-title">Установка CMS Blockster v<?=CMS_VERSION?></div>
             </div>
             <div class="card-section">
                 <div class="grid split-1">
@@ -26,16 +25,22 @@
                     </div>
                     <?php } ?>
                     <div class="cell xs-6 r">
-                        <label>Название сайта</label>
+                        <label>Логин администратора</label>
                     </div>
                     <div class="cell xs-6">
-                        <input type="text" name="siteName" autocomplete="off" value="<?=$siteName?>">
+                        <input class="form-control" type="text" name="login" autocomplete="off" value="<?=$login?>">
                     </div>
                     <div class="cell xs-6 r">
-                        <label>Адрес установки: <?=$hostUrl?></label>
+                        <label>Пароль</label>
                     </div>
                     <div class="cell xs-6">
-                        <input type="text" name="installUri" autocomplete="off" value="<?=$installUri?>">
+                        <input class="form-control" type="password" name="password" autocomplete="off" value="">
+                    </div>
+                    <div class="cell xs-6 r">
+                        <label>Повторите пароль</label>
+                    </div>
+                    <div class="cell xs-6">
+                        <input class="form-control" type="password" name="password2" autocomplete="off" value="">
                     </div>
                 </div>
             </div>

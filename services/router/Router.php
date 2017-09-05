@@ -3,39 +3,49 @@ namespace services\router;
 
 class Router
 {
-    protected $routes;
+    protected $routes = array();
 
-    public function __construct($filename)
+    public function __construct($routingMap)
     {
-        $this->routes = json_decode(file_get_contents(__DIR__.'/'.$filename), true);
+        $this->routes = json_decode(file_get_contents($routingMap), true);
+        if ($this->routes == null) die('JSON Syntax error in file "'.$routingMap.'"');
     }
 
-
-    public function findRoute($query)
+    public function findRoute($httpQuery)
     {
-        $selectableRoutes = array();
+        extract($httpQuery);
+        $filteredRoutes = array();
         foreach ($this->routes as $name => $route) if (isset($route['selector'])) {
-            if (!isset($route['selector']['httpMethod']) || strpos($route['selector']['httpMethod'], $_SERVER['REQUEST_METHOD']) !== false) {
-                if ($route['selector']['rgxp'] == $query) {
-                    return $route['content'];
-                } else {
-                    $selectableRoutes[] = $route;
-                }
+            $s = $route['selector'];
+            if (
+                (!isset($s['method']) || $s['method'] == $method) && 
+                (!isset($s['host']) || $s['host'] == $host) && 
+                (!isset($s['status']) || $s['status'] == $status) && 
+                (!isset($s['uri']) || $s['uri'] == $uri)
+            ){
+                return $route['content'];
+            } elseif (
+                (!isset($s['method']) || strpos($s['method'], $method) !== false) && 
+                (!isset($s['status']) || $s['status'] == $status)
+            ){
+                $filteredRoutes[] = $route;
             }
         }
 
-        return $this->match($query, $selectableRoutes);
+        return $this->match($httpQuery['host'].' '.$httpQuery['uri'], $filteredRoutes);
     }
 
-
-    protected function match($query, $routes)
+    protected function match($url, $routes)
     {
-        $str = $query.';9876543210';
+        $str = $url.';9876543210';
         $chunks = array_chunk($routes, 10);
         foreach ($chunks as $i => $chunk) {
             $pattern = array();
             foreach ($chunk as $j => $route) {
-                $pattern[] = $route['selector']['rgxp'].';\\d{'.(9-$j).'}(\\d{'.($j+1).'})';
+                $s = $route['selector'];
+                if (!isset($s['host'])) $s['host'] = '\\S+';
+                if (!isset($s['uri'])) $s['uri'] = '\\S+';
+                $pattern[] = $s['host'].' '.$s['uri'].';\\d{'.(9-$j).'}(\\d{'.($j+1).'})';
             }
             $pattern = '~^(?|'.implode('|', $pattern).')$~';
             if (preg_match($pattern, $str, $matches) === 1) {
@@ -43,22 +53,12 @@ class Router
                 $j = intval($j{0});
                 $params = array_slice($matches, 1, count($matches)-2);
                 $route = $chunk[$j];
-                if (!empty($params)) {
-                    if (isset($route['selector']['captureGroupNames'])) {
-                        $params = array_combine($route['selector']['captureGroupNames'], $params);
-                    }
-                    $_GET = array_merge($_GET, $params);
-                    $_REQUEST = array_merge($_REQUEST, $params);
+                if (!empty($params) && isset($route['names'])) {
+                    $_REQUEST['params'] = array_combine($route['names'], $params);
                 }
                 return $route['content'];
             }
         }
-        return false;
-    }
-
-
-    public function getRoute($key) {
-        if (isset($this->routes[$key])) return $this->routes[$key]['content'];
-        else return false;
+        return array();
     }
 }

@@ -16,23 +16,23 @@ class View
 
     public function setTemplate($template, $override=false) {
         if (empty($this->template) || $override) {
-            if (strpos($template, DIRECTORY_SEPARATOR) !== false) {
-                $this->template = $template;
-            } else {
-                $this->template = $this->tplDir.DIRECTORY_SEPARATOR.$template;
-            }
+            $this->template = $template;
         }
     }
 
-    public function render($data=array())
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    public function render()
     {
         extract($this->data);
         ob_start();
-        if (empty($this->template)) $this->template = $this->tplDir.DIRECTORY_SEPARATOR.'default.tpl';
-        require(ROOT_DIR.$this->template);
+        if (empty($this->template)) $this->template = 'default.tpl';
+        require($this->tplDir.DS.$this->template);
         $__output = ob_get_clean();
 
-        extract($this->data);
         foreach ($this->delayedFragments as $__n => $__fragment) {
             ob_start();
             $__fragment();
@@ -50,5 +50,45 @@ class View
     protected function getDelayedMarker($n)
     {
         return '~~delayed('.$n.')~~';
+    }
+
+    public function setTitle($title)
+    {
+        core()->sendMessage('page', 'setTitle', $title);
+    }
+
+    public function setKeywords($keywords)
+    {
+        core()->sendMessage('page', 'setKeywords', $keywords);
+    } 
+
+    public function setDescription($description)
+    {
+        core()->sendMessage('page', 'setDescription', $description);
+    } 
+
+    public function addCssText($css)
+    {
+        core()->sendMessage('page', 'addCssText', $css);
+    }
+
+    public function addJsText($js)
+    {
+        core()->sendMessage('page', 'addJsText', $js);
+    }
+
+    public function addCssFile($url)
+    {
+        core()->sendMessage('page', 'addCssFile', $url);
+    }
+
+    public function addJsFile($url)
+    {
+        core()->sendMessage('page', 'addJsFile', $url);
+    }
+
+    public function addMetaTag($tag)
+    {
+        core()->sendMessage('page', 'addMetaTag', $tag);
     }
 }

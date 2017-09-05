@@ -10,10 +10,10 @@
     );
     $this->data['title'] = 'Панель управления';
     $this->data['cssFiles'] = array(
-        '/themes/admin/assets/flexbox-grid.css',
-        '/themes/admin/assets/elements.css',
-        '/themes/admin/style.css',
-        '/themes/admin/assets/font-awesome/css/font-awesome.min.css'
+        '/themes/admin/page/assets/flexbox-grid.css',
+        '/themes/admin/page/assets/ui-elements.css',
+        '/themes/admin/page/style.css',
+        '/themes/admin/page/assets/font-awesome/css/font-awesome.min.css'
     );
     $this->data['jsFiles'] = array(
         '/themes/admin/assets/movements.js'
@@ -40,8 +40,8 @@
                 <i class="fa fa-globe"></i>
             </a>
             <button
-                class="header-btn hidden-md-up"
-                data-movements='{"when":"click", "do":toggleHeight", "with":{"target":"#adminMenu"}}'>
+                class="header-btn hidden-lg-up"
+                data-movements='{"when":"click", "do":"toggleHeight", "with":{"target":"#adminMenu", "hidingClass":"hidden-md-down"}}'>
                 <i class="fa fa-bars"></i>
             </button>
         </header>

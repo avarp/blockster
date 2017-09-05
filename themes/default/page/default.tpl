@@ -8,10 +8,9 @@
 ?>
 </head>
 <body>
-    <h1><?=SITE_NAME?></h1>
+    <h1>Сайт</h1>
     <p>Главная страница сайта</p>
-    <?=block('test', array('header' => 'Заголовок', 'content' => 'Текст блока. текст блока'))?>
-    <?=position('test-block')?>
+    <?=block('test')?>
     <?php $this->scripts() ?>
 </body>
 </html>

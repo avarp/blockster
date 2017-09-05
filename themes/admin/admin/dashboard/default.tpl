@@ -15,18 +15,18 @@
             <button type="button" class="btn btn-default" disabled>Кнопка</button>
         </p>
         <p>
-            <textarea>Textarea</textarea>
+            <textarea class="form-control">Textarea</textarea>
         </p>
         <p>
-            <textarea disabled>Disabled textarea</textarea>
+            <textarea class="form-control" disabled>Disabled textarea</textarea>
         </p>
         <p>
-            <input type="text" value="Textfield"><br>
-            <input type="text" value="Textfield disabled" disabled><br>
-            <select>
+            <input class="form-control" type="text" value="Textfield"><br>
+            <input class="form-control" type="text" value="Textfield disabled" disabled><br>
+            <select class="form-control">
                 <option>Select</option>
             </select><br>
-            <select disabled>
+            <select class="form-control" disabled>
                 <option>Select</option>
             </select><br>
         </p>
@@ -43,14 +43,14 @@
         <p>
             <fieldset>
                 <legend><label><input hidden type="checkbox" name="c2"><span></span> Checkbox</label></legend>
-                <input type="text" value="Textfield"><br>
-                <input type="text" value="Textfield disabled" disabled><br>
+                <input class="form-control" type="text" value="Textfield"><br>
+                <input class="form-control" type="text" value="Textfield disabled" disabled><br>
                 <p>
                     <label><input hidden type="radio" name="r11" checked><span></span> Radio</label>
                     <label><input hidden type="radio" name="r11"><span></span> Radio</label>
                     <label><input hidden type="checkbox" name="c1" checked><span></span> Checkbox</label>
                     <label><input hidden type="checkbox" name="c2"><span></span> Checkbox</label>
-                    <textarea>Textarea</textarea>
+                    <textarea class="form-control">Textarea</textarea>
                 </p>
                 <label><input hidden type="radio" name="r11" checked><span></span> Radio</label>
                 <label><input hidden type="radio" name="r11"><span></span> Radio</label>
@@ -71,14 +71,14 @@
         <p>
             <fieldset disabled>
                 <legend><label><input hidden type="checkbox" name="c2"><span></span> Checkbox</label></legend>
-                <input type="text" value="Textfield"><br>
-                <input type="text" value="Textfield disabled" disabled><br>
+                <input class="form-control" type="text" value="Textfield"><br>
+                <input class="form-control" type="text" value="Textfield disabled" disabled><br>
                 <p>
                     <label><input hidden type="radio" name="r11" checked><span></span> Radio</label>
                     <label><input hidden type="radio" name="r11"><span></span> Radio</label>
                     <label><input hidden type="checkbox" name="c1" checked><span></span> Checkbox</label>
                     <label><input hidden type="checkbox" name="c2"><span></span> Checkbox</label>
-                    <textarea>Textarea</textarea>
+                    <textarea class="form-control">Textarea</textarea>
                 </p>
                 <label><input hidden type="radio" name="r11" checked><span></span> Radio</label>
                 <label><input hidden type="radio" name="r11"><span></span> Radio</label>

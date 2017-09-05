@@ -1,35 +1,37 @@
 <?php
+function core()
+{
+   return \services\blockster\Core::getInstance(); 
+}
+
 function block($blockName, $params=array(), $template='')
 {
-    return \services\core\Blockster::getInstance()->loadBlock($blockName, $params, $template);
+    return core()->loadBlock($blockName, $params, $template);
 }
 
 function preparedBlock($blockName)
 {
-    return \services\core\Blockster::getInstance()->loadPreparedBlock($blockName);
+    return core()->loadPreparedBlock($blockName);
 }
 
 function position($posName)
 {
-    return \services\core\Blockster::getInstance()->loadPosition($posName);
+    return core()->loadPosition($posName);
 }
 
 function error403()
 {
-    \services\core\Blockster::getInstance()->resetOutput();
-    exit(block('page', array('route' => 'error403')));
+    core()->exitResponse(array('status' => 403));
 }
 
 function error404()
 {
-    \services\core\Blockster::getInstance()->resetOutput();
-    exit(block('page', array('route' => 'error404')));
+    core()->exitResponse(array('status' => 404));
 }
 
 function rebuildPage()
 {
-    \services\core\Blockster::getInstance()->resetOutput();
-    exit(block('page'));
+    core()->exitResponse();
 }
 
 function checkAccessLevel($minLevel, $maxLevel=0)

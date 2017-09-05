@@ -5,12 +5,10 @@ class Eventor
 {
 
     protected $events;
-    protected $eventsFile;
 
     public function __construct($eventsFile)
     {
-        $this->eventsFile = __DIR__.'/'.$eventsFile;
-        $this->events = json_decode(file_get_contents($this->eventsFile), true);
+        $this->events = json_decode(file_get_contents($eventsFile), true);
     }
 
     public function addEvent($event)

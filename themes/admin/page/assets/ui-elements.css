@@ -46,15 +46,16 @@ a:hover {text-decoration: underline;}
     border-radius: 2px;
 }
 .card-header, .card-header-big {
-    position: relative;
     background-color: #0288D1;
     color: #fff;
-    padding: 1em;
+    padding: 0.5em;
 }
-.cart-header-controls{
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
+.card-header .modal-title{
+    line-height: 2.5em;
+    padding: 0 .5em;
+}
+.card-header .modal-controls{
+    float: right;
 }
 .card-header-big {
     padding: 2em;
@@ -183,10 +184,11 @@ a.btn:hover {
 }
 
 .btn.btn-default {
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
     color: #555;
     background-color: #fff;
 }
-.btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default.active {background-color: #f0f0f0;}
+.btn.btn-default:hover, .btn.btn-default:focus, .btn.btn-default.active {background-color: #f8f8f8;}
 
 .btn.btn-primary {
     color: #fff;
@@ -257,8 +259,8 @@ ul.tabs.tabs-primary > li.active {
 /*******************************************************************************
     TEXTFIELD, SELECT
 *******************************************************************************/
-input[type="text"], input[type="password"], select {
-    color: inherit;
+.form-control {
+    color: #555;
     font: inherit;
     padding: 0.5em;
     line-height: 1.5em;
@@ -266,11 +268,12 @@ input[type="text"], input[type="password"], select {
     height: 2.5em;
     background-color: #fff;
     border: 1px solid #d0d0d0;
-    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
     border-radius: 2px;
+    outline: none;
 }
-input[type="text"]:focus, input[type="password"]:focus, select:focus {border-color: #00C853;outline:none;}
-select {
+.form-control:focus {border-color: #00C853;outline:none;}
+select.form-control {
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 30' height='30' width='18'%3E%3Cpath d='m 3,15 4,4 4,-4' style='fill:none;stroke:%23d0d0d0;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;' /%3E%3C/svg%3E");
@@ -279,26 +282,10 @@ select {
     background-size: contain;
     cursor: pointer;
 }
-
-
-
-/*******************************************************************************
-    TEXTAREA
-*******************************************************************************/
-textarea {
-    color: inherit;
-    font: inherit;
-    width: 100%;
+textarea.form-control {
     min-height: 2em;
-    outline: none;
-    padding: 0.5em;
-    background-color: #fff;
-    border: 1px solid #d0d0d0;
-    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);
-    border-radius: 2px;
     resize: vertical;
 }
-textarea:focus {border-color: #00C853;outline:none;}
 
 
 
@@ -319,6 +306,7 @@ input[hidden][type="checkbox"] + span, input[hidden][type="radio"] + span {
     background-size: cover;
     cursor: pointer;  
 }
+
 input[hidden][type="checkbox"] + span {border-radius: 2px;}
 input[hidden][type="radio"] + span {border-radius: 50%;}
 
@@ -352,19 +340,13 @@ fieldset > legend {
 /*******************************************************************************
     DISABLED ELEMENTS
 *******************************************************************************/
-fieldset[disabled] > :not(legend) input,
 fieldset[disabled] > :not(legend) input[type="checkbox"] + span,
 fieldset[disabled] > :not(legend) input[type="radio"] + span,
-fieldset[disabled] > :not(legend) textarea,
-fieldset[disabled] > :not(legend) button,
-fieldset[disabled] > :not(legend) select,
+fieldset[disabled] > :not(legend) .form-control,
 fieldset[disabled] > :not(legend) .btn,
-fieldset[disabled] > input,
 fieldset[disabled] > input[type="checkbox"] + span,
 fieldset[disabled] > input[type="radio"] + span,
-fieldset[disabled] > textarea,
-fieldset[disabled] > button,
-fieldset[disabled] > select,
+fieldset[disabled] > .form-control,
 fieldset[disabled] > .btn,
 [disabled],
 [disabled]:hover,
@@ -393,7 +375,7 @@ input[disabled][type="radio"]:checked + span {
 *******************************************************************************/
 .modal-wrap {
     position: fixed;
-    display: flex;
+    display: block;
     top: 0;
     left: 0;
     background-color: rgba(255,255,255,0.8);
@@ -401,10 +383,15 @@ input[disabled][type="radio"]:checked + span {
     z-index: 1000;
     width: 100vw;
     height: 100vh;
+    line-height: 100vh;
+    text-align: center;
     overflow-y: auto;
 }
 .modal {
-    margin: auto;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.5;
+    text-align: left;
 }
 
 
