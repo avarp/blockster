@@ -49,6 +49,8 @@ function addClass(target, cls)
     if (i == -1) {
         classes.push(cls)
         target.className = classes.join(' ')
+        target.dispatchEvent(new Event('onAddClass'))
+        target.dispatchEvent(new Event('onToggleClass'))
         return true
     } else {
         return false
@@ -62,6 +64,8 @@ function removeClass(target, cls)
     if (i != -1) {
         classes.splice(i, 1)
         target.className = classes.join(' ')
+        target.dispatchEvent(new Event('onRemoveClass'))
+        target.dispatchEvent(new Event('onToggleClass'))
         return true
     } else {
         return false
@@ -122,6 +126,8 @@ function expandHeight(target, duration, hidingClass)
         for (prop in animateTo) target.style[prop] = animateTo[prop]
         setTimeout(function(target){
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onExpandHeight'))
+            target.dispatchEvent(new Event('onToggleHeight'))
         }.bind(null, target), duration)
         return true
     }
@@ -146,6 +152,8 @@ collapseHeight = function(target, duration, hidingClass)
         setTimeout(function(target, hidingClass){
             addClass(target, hidingClass)
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onCollapseHeight'))
+            target.dispatchEvent(new Event('onToggleHeight'))
         }.bind(null, target, hidingClass), duration)
         return true
     } else {
@@ -206,6 +214,8 @@ function expandWidth(target, duration, hidingClass)
         for (prop in animateTo) target.style[prop] = animateTo[prop]
         setTimeout(function(target){
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onExpandWidth'))
+            target.dispatchEvent(new Event('onToggleWidth'))
         }.bind(null, target), duration)
         return true
     }
@@ -229,6 +239,8 @@ function collapseWidth(target, duration, hidingClass) {
         setTimeout(function(target, hidingClass){
             addClass(target, hidingClass)
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onCollapseWidth'))
+            target.dispatchEvent(new Event('onToggleWidth'))
         }.bind(null, target, hidingClass), duration)
         return true
     } else {
@@ -285,6 +297,7 @@ function showModal(target, duration, animation, hidingClass)
             case 'from-left':
             target.style.transform = 'translateX(50vh)'
             break
+            case 'default':
             case 'fall':
             target.style.transform = 'scale(1.5)'
             break
@@ -299,6 +312,8 @@ function showModal(target, duration, animation, hidingClass)
         target.style.opacity = ''
         setTimeout(function(target){
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onShowModal'))
+            target.dispatchEvent(new Event('onToggleModal'))
         }.bind(null, target), duration)
         return true
     }
@@ -311,18 +326,19 @@ function hideModal(target, duration, animation, hidingClass)
         target.style.transition = 'transform '+duration+'ms ease-in-out, opacity '+duration+'ms ease-in-out'
         forceRedraw(target)
         switch (animation) {
-            case 'from-top':
+            case 'to-bottom':
             target.style.transform = 'translateY(50vh)'
             break
-            case 'from-bottom':
+            case 'to-top':
             target.style.transform = 'translateY(-50vh)'
             break
-            case 'from-right':
+            case 'to-right':
             target.style.transform = 'translateX(50vh)'
             break
-            case 'from-left':
+            case 'to-left':
             target.style.transform = 'translateX(-50vh)'
             break
+            case 'default':
             case 'fall':
             target.style.transform = 'scale(0.66)'
             break
@@ -334,6 +350,8 @@ function hideModal(target, duration, animation, hidingClass)
         setTimeout(function(target, hidingClass){
             addClass(target, hidingClass)
             target.style.cssText = target.cssTextInitial
+            target.dispatchEvent(new Event('onHideModal'))
+            target.dispatchEvent(new Event('onToggleModal'))
         }.bind(null, target, hidingClass), duration)
         return true
     } else {
@@ -402,6 +420,10 @@ function showDropdown(target, source, duration, hidingClass)
         window.addEventListener('resize', updateCurentDropdownPos)
         window.addEventListener('scroll', updateCurentDropdownPos, true)
         document.body.addEventListener('click', hideCurrentDropdown, true)
+        
+        setTimeout(function(target){
+            target.dispatchEvent('onShowDropdown')
+        }.bind(null, target), duration)
 
         return true
     }
@@ -424,6 +446,7 @@ function hideDropdown(target, source, duration, hidingClass)
         setTimeout(function(target, hidingClass){
             target.style.cssText = target.cssTextInitial
             addClass(target, hidingClass)
+            target.dispatchEvent('onHideDropdown')
         }.bind(null, target, hidingClass), duration)
     }
 }

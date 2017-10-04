@@ -37,7 +37,7 @@ class Core
         }
         $this->eventor = new \services\eventor\Eventor(__DIR__.DS.'events.json');
         $this->router = new \services\router\Router(__DIR__.DS.'routing.json');
-        $this->eventor->fire('onSystemStart', $this);
+        $this->eventor->fire('onSystemStart');
     }
 
 
@@ -71,21 +71,21 @@ class Core
         if (empty($route)) $this->exitResponse(array('status' => 404));
         if (!isset($route['theme']) || !is_dir(ROOT_DIR.DS.'themes'.DS.$route['theme'])) exit('Routing error: Theme directory is not exists.');
         $this->theme = $route['theme'];
-        if (!isset($route['block'])) exit('Routing error: Main block is not specified.');
-        $this->eventor->fire('onRoutingDone', $route);
+        if (!isset($route['block'])) exit('Routing error: Root block is not specified.');
+        $this->eventor->addEvents($route['events']);
+        $route = $this->eventor->fire('onRoutingDone', $route);
 
         $this->positions = $route['positions'];
-        $this->eventor->addEvents($route['events']);
         $this->blockStack = array();
         $this->messageLog = array();
-        $response = $this->loadBlock($route['block']['name'], $route['block']['params'], $route['block']['template']);
-        $this->eventor->fire('onExit', $response);
+        $response = $this->loadBlock($route['block']['name'], $route['block']['params']);
+        $response = $this->eventor->fire('onExit', $response);
 
         $httpStatusCodes = array(
             404 => 'Not Found',
             403 => 'Forbidden'
         );
-        if (in_array($httpQuery['status'], $httpStatusCodes)) {
+        if (isset($httpStatusCodes[$httpQuery['status']])) {
             $sapiName = php_sapi_name();
             $s = $httpQuery['status'].' '.$httpStatusCodes[$httpQuery['status']];
             if ($sapiName == 'cgi' || $sapiName == 'cgi-fcgi') {
@@ -93,6 +93,10 @@ class Core
             } else {
                 header($_SERVER['SERVER_PROTOCOL'].' '.$s);
             }
+        }
+
+        if (substr($response, 0, 15) == '<!DOCTYPE html>') {
+            $response .= "\n<!-- Page generation time: ".round(1000*(microtime(true) - CMS_START), 3)."ms -->";
         }
         exit($response);
     }
@@ -116,11 +120,16 @@ class Core
 
 
 
-    public function loadBlock($name, $params, $template)
+    public function getUrl($destination)
     {
-        $args = compact('name', 'params', 'template');
-        $this->eventor->fire('onLoadBlock', $args);
+        return $this->router->getUrl($destination);
+    }
 
+
+
+
+    public function loadBlock($name, $params)
+    {
         $a = explode('::', $name);
         $cacheDir = ROOT_DIR.DS.'temp'.DS.'cache'.DS.$a[0];
         $tplDir = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$a[0];
@@ -142,7 +151,6 @@ class Core
         $viewClass = $namespace.'\\View';
         if (!class_exists($viewClass)) $viewClass = '\\blocks\\View';
         $view = new $viewClass($tplDir);
-        if (!empty($template)) $view->setTemplate($template);
         
         //load Model
         $modelClass = $namespace.'\\Model';
@@ -168,6 +176,8 @@ class Core
 
         //call action of controller
         $output = $controller->$action($params);
+        $args = compact('name', 'params');
+        $this->eventor->fire('onLoadBlock', $args);
 
         //pop the block from stack
         $b = array_pop($this->blockStack);
@@ -190,7 +200,7 @@ class Core
             $this->messageLog = array();
         }
 
-        $this->eventor->fire('onBlockOutput', $output);
+        $output = $this->eventor->fire('onBlockOutput', $output);
         return $output;
     }
 
@@ -238,8 +248,7 @@ class Core
             foreach ($blocks as $block) {
                 $output .= $this->loadBlock(
                     $block['name'],
-                    $block['params'],
-                    $block['template']
+                    $block['params']
                 );
             }
             return $output;

@@ -1,7 +1,7 @@
 <?php
 namespace services\database;
 
-class Database extends \PDO
+class Sqlite extends \PDO
 {
     public function __construct()
     {

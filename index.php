@@ -9,5 +9,4 @@ if (!file_exists('config.php')) require('install.php');
 else require('config.php');
 require('services/autoload.php');
 require('services/functions.php');
-
 core()->exitResponse();

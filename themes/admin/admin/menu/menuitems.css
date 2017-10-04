@@ -1,0 +1,33 @@
+.nesting-line {
+    display: inline-block;
+    vertical-align: middle;
+    width: 3em;
+    height: calc(100% - 1px);
+    padding: 0 0.75em;
+}
+.nesting-line:before, .nesting-line:after {
+    content: '';
+    display: block;
+    height: 50%;
+    border-left: 1px solid #ddd;
+}
+.nesting-line:after {
+    border-top: 1px solid #ddd;
+}
+.nesting-line.last:after {
+    border-left-color: transparent;
+}
+.nesting-line.vert:after {
+    border-top-color: transparent;
+}
+.table.menuitems-table td {
+    border: none;
+    padding: 0 0.5em;
+    height: 3.5em;
+}
+.sub-icon {
+    position: absolute;
+    bottom: 0.2rem;
+    right: 0.2rem;
+    font-size: 0.7em;
+}

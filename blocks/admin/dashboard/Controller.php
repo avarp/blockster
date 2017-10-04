@@ -10,7 +10,7 @@ class Controller extends \blocks\Controller
 
     public function action_settings() {
         restrictAccessLevel(100);
-        $this->view->setTemplate('settings.tpl');
+        $this->view->template = 'settings.tpl';
         return $this->view->render();
     }
 }

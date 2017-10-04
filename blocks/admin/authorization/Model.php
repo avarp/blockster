@@ -1,13 +1,13 @@
 <?php
 namespace blocks\admin\authorization;
-use services\database\Database;
+use services\database\Sqlite;
 
 class Model
 {
     private $dbh;
     public function __construct()
     {
-        $this->dbh = new Database;
+        $this->dbh = new Sqlite;
     }
 
     public function logIn($login ,$password)

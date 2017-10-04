@@ -6,8 +6,10 @@ class Controller extends \blocks\Controller
     public function action_default()
     {
         restrictAccessLevel(50);
-        if (!$_GET['adminUrl']) return block('admin/dashboard');
-        $actions = explode('/', $_GET['adminUrl']);
+        
+        if (empty($_REQUEST['params'][0])) return block('admin/dashboard');
+
+        $actions = explode('/', $_REQUEST['params'][0]);
         $block = '';
         $params = array();
 
@@ -30,7 +32,7 @@ class Controller extends \blocks\Controller
             }
         }
 
-        if (!$block) error404();
+        if (empty($block)) error404();
         
         return block($block, $params);
     }

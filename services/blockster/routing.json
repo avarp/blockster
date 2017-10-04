@@ -1,94 +1,92 @@
-[
-    {
+{
+    "error-404":{
         "selector":{
             "status":"404"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"404.tpl"
+                "params":{"template":"404.tpl"}
             },
             "theme":"default",
             "positions":{},
             "events":{}
         }
     },
-    {
+    "error-403":{
         "selector":{
             "status":"403"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"auth.tpl"
+                "params":{"template":"auth.tpl"}
             },
             "theme":"admin",
             "positions":{},
             "events":{}
         }
     },
-    {
+    "ajax":{
         "selector":{
             "uri":"/ajax/(.+)"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"ajax.tpl"
+                "params":{"template":"ajax.tpl"}
             },
             "theme":"admin",
             "positions":{},
             "events":{}
-        }
+        },
+        "format":"{SITE_URL}/ajax/{0}"
     },
-    {
+    "adminer":{
         "selector":{
             "uri":"/adminer"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"adminer.tpl"
+                "params":{"template":"adminer.tpl"}
             },
             "theme":"admin",
             "positions":{},
             "events":{}
-        }
+        },
+        "format":"{SITE_URL}/adminer"
+
     },
-    {
+    "admin":{
         "selector":{
-            "uri":"/admin"
+            "uri":"/admin/?(.*)"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"default.tpl"
+                "params":{"template":"default.tpl"}
             },
             "theme":"admin",
             "positions":{
-                "content":[{"name":"admin/dashboard", "params":{}, "template":""}]
+                "content":[{"name":"admin", "params":{}}]
             },
             "events":{}
-        }
+        },
+        "format":"{SITE_URL}/admin/{0}"
     },
-    {
+    "other":{
         "selector":{
             "uri":".+"
         },
         "content":{
             "block":{
                 "name":"page",
-                "params":{},
-                "template":"default.tpl"
+                "params":{"template":"default.tpl"}
             },
             "theme":"default",
             "positions":{},
             "events":{}
         }
     }
-]
+}

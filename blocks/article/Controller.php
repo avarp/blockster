@@ -3,9 +3,9 @@ namespace blocks\article;
 
 class Controller extends \blocks\Controller
 {
-    public function action_default()
+    public function action_default($params)
     {
-        $article = $this->model->findByUrl($_SERVER['REQUEST_URI'], $_SERVER['HTTP_HOST']);
+        return '<div class="alert alert-info">article</div>';
     }
 
     public function action_admin($params)

@@ -4,14 +4,9 @@ function core()
    return \services\blockster\Core::getInstance(); 
 }
 
-function block($blockName, $params=array(), $template='')
+function block($blockName, $params=array())
 {
-    return core()->loadBlock($blockName, $params, $template);
-}
-
-function preparedBlock($blockName)
-{
-    return core()->loadPreparedBlock($blockName);
+    return core()->loadBlock($blockName, $params);
 }
 
 function position($posName)
@@ -74,6 +69,12 @@ function transcript($str)
 function toUrl($str)
 {
     return trim(preg_replace('/[^a-z0-9]+/', '-', strtolower(transcript($str))), '-');
+}
+
+function pathToUrl($path)
+{
+    $path = DS != '/' ? str_replace(DS, '/', $path) : $path;
+    return str_replace(ROOT_DIR, SITE_URL, $path);
 }
 
 function base58_encode($var, $acceptInteger=false)

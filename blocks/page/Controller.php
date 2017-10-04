@@ -3,8 +3,9 @@ namespace blocks\page;
 
 class Controller extends \blocks\Controller
 {
-    public function action_default($httpQuery)
+    public function action_default($params)
     {    
+        $this->view->template = $params['template'];
         return $this->view->render();
     }
 

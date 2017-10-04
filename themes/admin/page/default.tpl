@@ -16,7 +16,8 @@
         '/themes/admin/page/assets/font-awesome/css/font-awesome.min.css'
     );
     $this->data['jsFiles'] = array(
-        '/themes/admin/assets/movements.js'
+        '/themes/admin/page/assets/movements.js',
+        '/themes/admin/page/assets/nativeModel.js'
     );
     $this->head();
 ?>
@@ -25,7 +26,7 @@
     <div class="grid padding-1" id="wrap">
         <header class="cell lg-3 xl-2 hidden-md-down">
             <div class="logo">
-                <img src="<?=SITE_URL?>/themes/admin/images/logo.svg">
+                <img src="<?=pathToUrl(__DIR__.'/images/logo.svg')?>">
                 Blockster <sup>v<?=CMS_VERSION?></sup>
             </div>
         </header>
@@ -47,9 +48,9 @@
         </header>
         <nav class="cell lg-3 xl-2 hidden-md-down" id="adminMenu">
             <ul class="menu">
-                <li><a href="<?=SITE_URL?>/admin"><i class="fa fa-cogs"></i>Панель управления</a></li>
-                <li><a href="<?=SITE_URL?>/content/infobases"><i class="fa fa-table"></i>Инфобазы</a></li>
-                <li><a href="<?=SITE_URL?>/adminer"><i class="fa fa-database"></i>Adminer</a></li>
+                <li><a href="<?=core()->getUrl('> admin')?>"><i class="fa fa-cogs"></i>Панель управления</a></li>
+                <li><a href="<?=core()->getUrl('> admin > menu')?>"><i class="fa fa-bars"></i>Меню</a></li>
+                <li><a href="<?=core()->getUrl('> adminer')?>"><i class="fa fa-database"></i>Adminer</a></li>
             </ul>
         </nav>
         <main class="cell lg-9 xl-10" id="main">
@@ -59,4 +60,3 @@
 <?php $this->scripts(); ?>
 </body>
 </html>
-<!-- Page generation time: <?=1000*(microtime(true)-CMS_START)?> ms -->

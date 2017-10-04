@@ -3,7 +3,7 @@ namespace blocks;
 
 class View
 {
-    protected $template;
+    public $template;
     protected $tplDir;
     protected $delayedFragments = array();
     public $data = array();
@@ -11,25 +11,13 @@ class View
     public function __construct($tplDir)
     {
         $this->tplDir = $tplDir;
-        $this->template = '';
-    }
-
-    public function setTemplate($template, $override=false) {
-        if (empty($this->template) || $override) {
-            $this->template = $template;
-        }
-    }
-
-    public function getTemplate()
-    {
-        return $this->template;
+        $this->template = 'default.tpl';
     }
 
     public function render()
     {
         extract($this->data);
         ob_start();
-        if (empty($this->template)) $this->template = 'default.tpl';
         require($this->tplDir.DS.$this->template);
         $__output = ob_get_clean();
 

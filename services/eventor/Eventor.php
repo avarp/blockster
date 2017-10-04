@@ -41,9 +41,8 @@ class Eventor
         if (isset($this->events[$event])) {
             $this->events[$event][] = $handler;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public function detachHandler($event, $handler)
@@ -51,28 +50,27 @@ class Eventor
         if (isset($this->events[$event])) {
             $hkey = array_search($handler, $this->events[$event]);
             if ($hkey !== false) {
-                unset($this->events[$event][$hkey]);
+                array_splice($this->events[$event], $hkey, 1);
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public function fire($event, &$params=null)
+    public function fire($event, $params=null)
     {
-        if (isset($this->events[$event])) foreach ($this->events[$event] as $handler) {
-            $handler = explode('::', $handler);
+        if (isset($this->events[$event])) for ($i = count($this->events[$event])-1; $i>=0; $i--) {
+            $handler = explode('::', $this->events[$event][i]);
             if (count($handler) == 2 && class_exists($handler[0]) && method_exists($handler[0], $handler[1])) {
                 $class = $handler[0];
                 $method = $handler[1];
-                $class::$method($params);
+                $result = $class::$method($params);
             } elseif (function_exists($handler[0])) {
                 $function = $handler[0];
-                $function($params);
+                $result = $function($params);
             }
+            if (!is_null($result)) $params = $result;
         }
+        return $params;
     }
 }

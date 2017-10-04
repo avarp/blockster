@@ -21,4 +21,3 @@
     <?=block('admin/authorization')?>
 </body>
 </html>
-<!-- Page generation time: <?=1000*(microtime(true)-CMS_START)?> ms -->

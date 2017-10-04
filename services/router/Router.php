@@ -11,6 +11,32 @@ class Router
         if ($this->routes == null) die('JSON Syntax error in file "'.$routingMap.'"');
     }
 
+    public function getUrl($destination)
+    {
+        if (strpos($destination, '>') === false) return $destination;
+        $params = explode('>', trim($destination, ' >'));
+        $params = array_map(function($x){return trim($x);}, $params);
+        $routeName = array_shift($params);
+        if (!isset($this->routes[$routeName])) {
+            trigger_error('Route "'.$routeName.'" is not defined.', E_USER_WARNING);
+        } elseif (!isset($this->routes[$routeName]['format'])) {
+            trigger_error('URL format of route "'.$routeName.'" is not defined.', E_USER_WARNING);
+        } else {
+            $params['SITE_URL'] = SITE_URL;
+            $params['HTTP_HOST'] = $_SERVER['HTTP_HOST'];
+            $params['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
+            $params['PROTOCOL'] = (!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://';
+
+            $format = $this->routes[$routeName]['format'];
+            foreach ($params as $key => $value) {
+                if (strpos($format, '{') === false) break;
+                $format = str_replace('{'.$key.'}', $value, $format);
+            }
+            if (strpos($format, '{') !== false) $format = preg_replace('/\{[^}]+\}/', '', $format);
+            return rtrim($format, '/');
+        }
+    }
+
     public function findRoute($httpQuery)
     {
         extract($httpQuery);
@@ -53,9 +79,7 @@ class Router
                 $j = intval($j{0});
                 $params = array_slice($matches, 1, count($matches)-2);
                 $route = $chunk[$j];
-                if (!empty($params) && isset($route['names'])) {
-                    $_REQUEST['params'] = array_combine($route['names'], $params);
-                }
+                if (!empty($params)) $_REQUEST['params'] = $params;
                 return $route['content'];
             }
         }

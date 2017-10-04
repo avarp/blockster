@@ -30,13 +30,19 @@ class Controller extends \blocks\Controller
         die();
     }
 
-    public static function addTrackingScript($page)
+    public function action_trackingUsers()
     {
+        if (isset($_SESSION['user'])) $this->model->updateTrackingTimestamp();
+    }
+
+    public static function addTrackingScript($block)
+    {
+        if ($block['name'] != 'page') return;
         if (isset($_SESSION['user'])) {
-            $page->addJsText(
+            core()->sendMessage('page', 'addJsText',
                 "setInterval(function(){".
                     "var xhr = new XMLHttpRequest();".
-                    "xhr.open('GET', '".SITE_URL."/ajax/admin/authorization::ajaxUpdateTrackingTimestamp', true);".
+                    "xhr.open('GET', '".SITE_URL."/ajax/admin/authorization::trackingUsers', true);".
                     "xhr.send()".
                 "}, ".(ONLINE_FLAG_LIFETIME*1000).")"
             );
@@ -45,11 +51,5 @@ class Controller extends \blocks\Controller
                 $model->updateTrackingTimestamp();
             }
         }
-    }
-
-
-    public function ajaxUpdateTrackingTimestamp()
-    {
-        if (isset($_SESSION['user'])) $this->model->updateTrackingTimestamp();
     }
 }

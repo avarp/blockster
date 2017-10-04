@@ -6,6 +6,7 @@ class Controller extends \blocks\Controller
     public function action_default($params)
     {
         if (core()->useCache('action_default', 90)) return;
+        sleep(1);
         $this->view->data['time'] = time();
         $this->view->data['header'] = 'Header';
         return $this->view->render();
@@ -14,7 +15,7 @@ class Controller extends \blocks\Controller
     public function action_nesting_test($params)
     {
         core()->sendMessage('test', 'setHeader', 'Заголовок');
-        $this->view->setTemplate('alternative.tpl');
+        $this->view->template = 'alternative.tpl';
         return $this->view->render();
     }
 

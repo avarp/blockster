@@ -1,6 +1,6 @@
 <?php
-if (isset($_GET['blockName'])) echo block(
-    $_GET['blockName'],
-    isset($_POST['params']) ? json_decode($_POST['params']) : array(),
-    isset($_POST['imposedTemplate']) ? $_POST['imposedTemplate'] : ''
+$input = file_get_contents('php://input');
+if (isset($_REQUEST['params'][0])) echo block(
+    $_REQUEST['params'][0],
+    empty($input) ? json_decode($input) : array()
 );
