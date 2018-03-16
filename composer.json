@@ -1,0 +1,13 @@
+{
+  "name": "Blockster",
+  "autoload": {
+    "psr-4": {
+      "core\\": "core/",
+      "modules\\": "modules/"
+    }
+  },
+  "require": {
+    "php": ">=5.3.0",
+    "maxakawizard/mo-reader": ">=0.3.0"
+  }
+}

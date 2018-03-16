@@ -4,6 +4,7 @@ DirectorySlash off
 
 <IfModule mod_rewrite.c>
     RewriteEngine on
+    RewriteBase /
 
     # redirect www.example.com to example.com
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]

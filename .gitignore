@@ -1,2 +1,3 @@
-config.php
-reconfig.php
+composer.phar
+composer.lock
+vendor/**

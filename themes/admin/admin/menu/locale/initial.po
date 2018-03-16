@@ -1,0 +1,47 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-13 18:15+0200\n"
+"PO-Revision-Date: 2018-01-13 18:15+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-KeywordsList: t:1,1t;t:1,2c,2t;t:1,2,3t\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: menus.php:12
+msgid "Create menu"
+msgstr ""
+
+#: menus.php:22
+msgid "Name"
+msgstr ""
+
+#: menus.php:23
+msgid "Actions"
+msgstr ""
+
+#: menus.php:38
+msgid "Delete menu? Undelete will not be possible."
+msgstr ""
+
+#: menus.php:51
+msgid "There is no menu created."
+msgstr ""
+
+#: menus.php:56
+msgid "Menu is deleted."
+msgstr ""

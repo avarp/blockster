@@ -1,0 +1,307 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-08 21:11+0200\n"
+"PO-Revision-Date: 2018-03-08 21:11+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-KeywordsList: t:1,1t;t:1,2c,2t;t:1,2,3t\n"
+"X-Poedit-Basepath: ../../../../..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: themes/admin/admin/menu\n"
+"X-Poedit-SearchPath-1: modules/admin/menu\n"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:111
+#: themes/admin/admin/menu/menu-editor.js:111
+msgid "Menu is saved"
+msgstr "Меню сохранено"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:115
+#: themes/admin/admin/menu/menu-editor.js:115
+msgid "Translation was deleted"
+msgstr "Перевод меню удален"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:119
+#: themes/admin/admin/menu/menu-editor.js:119
+msgid "Translation was created"
+msgstr "Перевод создан"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:198
+#: themes/admin/admin/menu/menu-editor.js:198
+msgid "Delete selected items?"
+msgstr "Удалить выделенные пункты?"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:271
+#: themes/admin/admin/menu/menu-editor.js:271
+msgid "Menu was not saved. Try to save it again."
+msgstr "Меню не удалось сохранить. Попробуйте еще раз."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:292
+#: themes/admin/admin/menu/menu-editor.js:292
+msgid "Delete this translation?"
+msgstr "Удалить этот перевод?"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:303
+#: themes/admin/admin/menu/menu-editor.js:303
+msgid "Server error. Translation was not deleted."
+msgstr "Ошибка сервера. Удалить перевод не удалось."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:334
+#: themes/admin/admin/menu/menu-editor.js:334
+msgid "Server error. Translation was not created."
+msgstr "Ошибка сервера. Перевод создать не удалось."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:377
+#: themes/admin/admin/menu/menu-editor.js:377
+msgid "Fill system name."
+msgstr "Укажите системное имя."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:380
+#: themes/admin/admin/menu/menu-editor.js:380
+msgid "This name is already in use."
+msgstr "Это имя уже занято."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:384
+#: themes/admin/admin/menu/menu-editor.js:384
+msgid "Fill title."
+msgstr "Заполните название."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:404
+#: themes/admin/admin/menu/menu-editor.js:404
+msgid "Server error. Check connection."
+msgstr "Ошибка сервера. Проверьте соединение."
+
+#: themes/admin/admin/menu/menu-editor-v0.js:479
+#: themes/admin/admin/menu/menu-editor.js:479
+msgid "Select language of new translation"
+msgstr "Выберите язык перевода"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:481
+#: themes/admin/admin/menu/menu-editor.js:481
+msgid "Select language you want to copy from."
+msgstr "Язык с которого скопировать"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:556
+#: themes/admin/admin/menu/menu-editor.js:556
+msgid "Label of item is empty"
+msgstr "Текст пункта меню не указан"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:557
+#: themes/admin/admin/menu/menu-editor.js:557
+msgid "Address of link is empty"
+msgstr "Адрес ссылки не указан"
+
+#: themes/admin/admin/menu/menu-editor-v0.js:558
+#: themes/admin/admin/menu/menu-editor.js:558
+msgid "Access level is empty"
+msgstr "Уровень доступа не указан"
+
+#: modules/admin/menu/Controller.php:10
+msgid "Dashboard"
+msgstr "Панель управления"
+
+#: modules/admin/menu/Controller.php:11 modules/admin/menu/Controller.php:17
+msgid "List of menus"
+msgstr "Список меню"
+
+#: modules/admin/menu/Model.php:43
+msgid "New menu"
+msgstr "Новое меню"
+
+#: themes/admin/admin/menu/menu-editor.php:38
+#: themes/admin/admin/menu/menus.php:21
+msgid "System name"
+msgstr "Системное имя"
+
+#: themes/admin/admin/menu/menu-editor.php:43
+msgid "Title"
+msgstr "Название"
+
+#: themes/admin/admin/menu/menu-editor.php:51
+#: themes/admin/admin/menu/menu-editor.php:228
+msgid "Save"
+msgstr "Сохранить"
+
+#: themes/admin/admin/menu/menu-editor.php:55
+msgid "Menu"
+msgstr "Меню"
+
+#: themes/admin/admin/menu/menu-editor.php:63
+#: themes/admin/admin/menu/menu-editor.php:87
+msgid "Delete"
+msgstr "Удалить"
+
+#: themes/admin/admin/menu/menu-editor.php:67
+#: themes/admin/admin/menu/menu-editor.php:79
+msgid "Add"
+msgstr "Добавить"
+
+#: themes/admin/admin/menu/menu-editor.php:71
+msgid "Translations"
+msgstr "Переводы"
+
+#: themes/admin/admin/menu/menu-editor.php:83
+msgid "Edit"
+msgstr "Изменить"
+
+#: themes/admin/admin/menu/menu-editor.php:91
+msgid "Options"
+msgstr "Опции"
+
+#: themes/admin/admin/menu/menu-editor.php:95
+msgid "Items of menu"
+msgstr "Пункты меню"
+
+#: themes/admin/admin/menu/menu-editor.php:101
+msgid "Expand all"
+msgstr "Развернуть всё"
+
+#: themes/admin/admin/menu/menu-editor.php:102
+msgid "Collapse all"
+msgstr "Свернуть всё"
+
+#: themes/admin/admin/menu/menu-editor.php:103
+msgid "Select all"
+msgstr "Выделить всё"
+
+#: themes/admin/admin/menu/menu-editor.php:107
+msgid "Clear selection"
+msgstr "Снять выделение"
+
+#: themes/admin/admin/menu/menu-editor.php:112
+msgid "Increase nesting level"
+msgstr "Увеличить вложенность"
+
+#: themes/admin/admin/menu/menu-editor.php:117
+msgid "Decrease nesting level"
+msgstr "Уменьшить вложенность"
+
+#: themes/admin/admin/menu/menu-editor.php:125
+msgid "No items"
+msgstr "Нет пунктов"
+
+#: themes/admin/admin/menu/menu-editor.php:143
+msgid "This item has non-zero access level."
+msgstr "Этот пункт имеет уровень доступа больше нуля."
+
+#: themes/admin/admin/menu/menu-editor.php:170
+msgid "New item of menu"
+msgstr "Новый пункт меню"
+
+#: themes/admin/admin/menu/menu-editor.php:171
+msgid "Edit item of menu"
+msgstr "Изменить пункт меню"
+
+#: themes/admin/admin/menu/menu-editor.php:182
+msgid "Label"
+msgstr "Текст"
+
+#: themes/admin/admin/menu/menu-editor.php:188
+msgid "Link"
+msgstr "Ссылка"
+
+#: themes/admin/admin/menu/menu-editor.php:194
+msgid "Access level"
+msgstr "Уровень доступа"
+
+#: themes/admin/admin/menu/menu-editor.php:200
+msgid "Additional info"
+msgstr "Доп. информация"
+
+#: themes/admin/admin/menu/menu-editor.php:206
+msgid "Save to"
+msgstr "Сохранить в"
+
+#: themes/admin/admin/menu/menu-editor.php:210
+msgid "End of menu"
+msgstr "Конец меню"
+
+#: themes/admin/admin/menu/menu-editor.php:211
+msgid "Before selected item"
+msgstr "Перед выделенным пунктом"
+
+#: themes/admin/admin/menu/menu-editor.php:212
+msgid "After selected item"
+msgstr "После выделенного пункта"
+
+#: themes/admin/admin/menu/menu-editor.php:213
+msgid "Inside selected item"
+msgstr "Внутрь выделенного пункта"
+
+#: themes/admin/admin/menu/menu-editor.php:215
+msgid "Select only one item for enabling other variants."
+msgstr "Выделите только один пункт чтобы использовать другие варианты."
+
+#: themes/admin/admin/menu/menu-editor.php:223
+#: themes/admin/admin/menu/menu-editor.php:300
+msgid "Cancel"
+msgstr "Отмена"
+
+#: themes/admin/admin/menu/menu-editor.php:248
+msgid "Create translation"
+msgstr "Создать перевод"
+
+#: themes/admin/admin/menu/menu-editor.php:261
+msgid ""
+"This module is not provide automatic translation. It just create version of "
+"menu for specified language."
+msgstr ""
+"Этот модуль не производит автоматический перевод. Просто создает версии меню "
+"для каждого языка."
+
+#: themes/admin/admin/menu/menu-editor.php:265
+msgid "Language"
+msgstr "Язык"
+
+#: themes/admin/admin/menu/menu-editor.php:277
+msgid "Go editing after creation"
+msgstr "Перейти к редактированию"
+
+#: themes/admin/admin/menu/menu-editor.php:280
+msgid "Duplicate from other language"
+msgstr "Скопировать с другого языка"
+
+#: themes/admin/admin/menu/menu-editor.php:283
+msgid "Duplicate from"
+msgstr "Скопировать из"
+
+#: themes/admin/admin/menu/menu-editor.php:305
+msgid "Create"
+msgstr "Создать"
+
+#: themes/admin/admin/menu/menus.php:12
+msgid "Create menu"
+msgstr "Создать меню"
+
+#: themes/admin/admin/menu/menus.php:22
+msgid "Name"
+msgstr "Имя"
+
+#: themes/admin/admin/menu/menus.php:23
+msgid "Actions"
+msgstr "Действия"
+
+#: themes/admin/admin/menu/menus.php:45
+msgid "Delete menu? Undelete will not be possible."
+msgstr "Удалить меню? Отмена удаления будет невозможна."
+
+#: themes/admin/admin/menu/menus.php:58
+msgid "There is no menu created."
+msgstr "Ни одного меню не создано."
+
+#: themes/admin/admin/menu/menus.php:64
+msgid "Menu is deleted."
+msgstr "Меню удалено."
