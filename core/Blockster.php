@@ -40,8 +40,7 @@ class Blockster
             define('SITE_URL', $siteUrl);
         }
         $this->eventor = new services\Eventor;
-        $this->router = new services\Router(ROOT_DIR.DS.'routing.json');
-        $this->eventor->fire('onSystemStart');
+        $this->router = new services\Router('routing.json');
         $this->translator = new services\Translator;
     }
 
@@ -72,6 +71,8 @@ class Blockster
         if ($recursionCounter > 10) {
             throw new BlocksterException('Error in function exitResponse. Recursion is too deep.');
         }
+
+        $this->eventor->fire('onSystemStart');
 
         for ($i=ob_get_level(); $i>0; $i--) ob_get_clean();
         if (!isset($httpQuery['uri'])) $httpQuery['uri'] = $this->trimGetParams($_SERVER['REQUEST_URI']);
@@ -107,9 +108,9 @@ class Blockster
             $l = key($langs);
         }
         if (isset($route['data'])) {
-            $this->dbh = new services\Sqlite(ROOT_DIR.DS.'data'.DS.$route['data']);
+            $this->dbh = new services\Sqlite('data'.DS.$route['data']);
         } else {
-            $this->dbh = new services\Sqlite(ROOT_DIR.DS.'data'.DS.'default.sqlite');
+            $this->dbh = new services\Sqlite('data'.DS.'default.db');
         }
         $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
         if (!$this->lang) $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));

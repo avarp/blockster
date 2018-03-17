@@ -3,26 +3,18 @@ namespace core\services;
 
 class Sqlite extends \PDO
 {
-    private static $statementsCache = array();
-
     public function __construct($dbFile)
     {
         parent::__construct('sqlite:'.$dbFile);
         parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
-    private function cachedPrepare($sql) {
-        $key = md5($sql);
-        if (isset(self::$statementsCache[$key])) return self::$statementsCache[$key];
-        return self::$statementsCache[$key] = parent::prepare($sql);
-    }
-
     public function table($sql, $array=array())
     {
         if (!empty($array)) {
-            $statement = $this->cachedPrepare($sql);
+            $statement = parent::prepare($sql);
             if ($statement) {
-                if (!$statement->execute($this->prepareArray($sql, $array))) $statement = false;
+                if (!$statement->execute($this->cleanArray($sql, $array))) $statement = false;
             } else {
                 return false;
             }
@@ -39,9 +31,9 @@ class Sqlite extends \PDO
     public function row($sql, $array=array())
     {
         if (!empty($array)) {
-            $statement = $this->cachedPrepare($sql);
+            $statement = parent::prepare($sql);
             if ($statement) {
-                if (!$statement->execute($this->prepareArray($sql, $array))) $statement = false;
+                if (!$statement->execute($this->cleanArray($sql, $array))) $statement = false;
             } else {
                 return false;
             }
@@ -58,9 +50,9 @@ class Sqlite extends \PDO
     public function value($sql, $array=array())
     {
         if (!empty($array)) {
-            $statement = $this->cachedPrepare($sql);
+            $statement = parent::prepare($sql);
             if ($statement) {
-                if (!$statement->execute($this->prepareArray($sql, $array))) $statement = false;
+                if (!$statement->execute($this->cleanArray($sql, $array))) $statement = false;
             } else {
                 return false;
             }
@@ -78,9 +70,9 @@ class Sqlite extends \PDO
     public function exec($sql, $array=array())
     {
         if (!empty($array)) {
-            $statement = $this->cachedPrepare($sql);
+            $statement = parent::prepare($sql);
             if ($statement) {
-                return $statement->execute($this->prepareArray($sql, $array));
+                return $statement->execute($this->cleanArray($sql, $array));
             } else {
                 return false;
             }
@@ -89,7 +81,7 @@ class Sqlite extends \PDO
         }
     }
 
-    private function prepareArray($sql, $array)
+    private function cleanArray($sql, $array)
     {
         if (0 < $c = substr_count($sql, '?')) {
             return array_slice($array, 0, $c);
