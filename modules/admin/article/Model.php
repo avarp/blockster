@@ -8,7 +8,7 @@ class Model
     protected $articleTemplate;
     public function __construct()
     {
-        $this->dbh = new Sqlite;
+        $this->dbh = core()->dbh;
         $this->articleTemplate = array(
             'id' => 0,
             'lang' => '',

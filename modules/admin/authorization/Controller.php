@@ -1,7 +1,6 @@
 <?php
 namespace modules\admin\authorization;
 
-const ONLINE_FLAG_LIFETIME = 900;//15 min
 
 class Controller extends \modules\Controller
 {

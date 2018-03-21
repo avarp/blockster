@@ -8,18 +8,26 @@ class System
     private static $instance;
     private $router;
     private $translator;
-    public $eventBus;
+    private $eventBus;
     private $dbh;
     private $positions = array();
     private $theme;
+    private $themeUrl;
     private $lang;
-    private $direction;
     private $moduleStack = array();
     private $msgLog = array();
 
 
     private function __clone() {}
     private function __wakeup() {}
+
+
+    public function __get($name)
+    {
+        if (in_array($name, ['dbh', 'eventBus', 'theme', 'themeUrl', 'lang'])) {
+            return $this->$name;
+        }
+    }
 
 
     public static function getInstance()
@@ -90,15 +98,16 @@ class System
         }
         if (empty($route)) $this->exitResponse(array('status' => 404));
 
-        $route = $this->eventBus->dispatchEventFilter('onRoutingDone', $route);
-
+        $route = $this->eventBus->dispatchEventFilter('onRouting', $route);
+        if (!isset($route['module'])) {
+            throw new SystemException('Error in function exitResponse. Root module is not specified.');
+        }
         if (!isset($route['theme']) || !is_dir(ROOT_DIR.DS.'themes'.DS.$route['theme'])) {
             throw new SystemException('Error in function exitResponse. Theme directory is not specified or exists.');
         }
         $this->theme = $route['theme'];
-        if (!isset($route['module'])) {
-            throw new SystemException('Error in function exitResponse. Root module is not specified.');
-        }
+        $this->themeUrl = SITE_URL.'/themes/'.$this->theme;
+        
         
         if (isset($route['events'])) $this->eventBus->importEventHandlers($route['events']);
 
@@ -124,6 +133,7 @@ class System
 
         if (isset($route['positions'])) $this->positions = $route['positions'];
 
+        $this->eventBus->dispatchEvent('onRoutingDone');
         $response = $this->loadModule($route['module']['name'], $route['module']['params']);
         $response = $this->eventBus->dispatchEventFilter('onExit', $response);
 
@@ -162,35 +172,6 @@ class System
     }
 
 
-
-
-    public function getDbh()
-    {
-        return $this->dbh;
-    }
-
-
-
-    public function getThemeName()
-    {
-        return $this->theme;
-    }
-
-
-
-    public function getThemeUrl()
-    {
-        return SITE_URL.'/themes/'.$this->theme;
-    }
-
-
-
-
-    public function getLang($key='isoCode')
-    {
-        if ($key == 'dir') $key == 'direction';
-        return isset($this->lang[$key]) ? $this->lang[$key] : '';
-    }
 
 
 
@@ -264,8 +245,9 @@ class System
         
         //load Controller
         $controller = new $controllerClass($view, $model);
-        $this->moduleStack[count($this->moduleStack)-1]['controller'] = $controller;
-        $this->eventBus->dispatchEvent('onModuleLoad', compact('name', 'params'));
+        $depth = count($this->moduleStack) - 1;
+        $this->moduleStack[$depth]['controller'] = $controller;
+        $this->eventBus->dispatchEvent('onModuleLoad', compact('depth', 'name', 'params'));
 
         //call action of controller
         $output = $controller->$action($params);

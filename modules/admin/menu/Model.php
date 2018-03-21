@@ -7,7 +7,7 @@ class Model
 
     public function __construct()
     {
-        $this->dbh = core()->getDbh();
+        $this->dbh = core()->dbh;
     }
 
 
@@ -57,7 +57,7 @@ class Model
      */
     public function getListOfMenu()
     {
-        $userLang = core()->getLang();
+        $userLang = core()->lang['isoCode'];
         $menus = $this->dbh->table('SELECT label, href as "sysname" FROM menu WHERE parentId=0 AND customField=?', array($userLang));
         $userLangLabels = array();
         foreach ($menus as $m) {

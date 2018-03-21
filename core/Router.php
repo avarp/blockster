@@ -24,7 +24,7 @@ class Router
             throw new RouterException('URL schema of route "'.$routeName.'" is not defined.');
         } else {
             $params['SITE_URL'] = SITE_URL;
-            $params['LANG'] = core()->getLang();
+            $params['LANG'] = core()->lang['isoCode'];
             $params['HTTP_HOST'] = $_SERVER['HTTP_HOST'];
             $params['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
             $params['PROTOCOL'] = (!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://';

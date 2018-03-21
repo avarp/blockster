@@ -6,7 +6,7 @@ class Model
     private $dbh;
     public function __construct()
     {
-        $this->dbh = core()->getDbh();
+        $this->dbh = core()->dbh;
     }
 
     public function logIn($login ,$password)
@@ -16,15 +16,20 @@ class Model
             if (isset($_SESSION['user'])) $this->logOut();
             $_SESSION['user'] = $user;
             $this->updateTrackingTimestamp();
+            core()->eventBus->dispatchEvent('onLogIn');
             return true;
         } else {
+            core()->eventBus->dispatchEvent('onLogInFail');
             return false;
         }
     }
 
     public function logOut()
     {
-        if (isset($_SESSION['user'])) unset($_SESSION['user']);
+        if (isset($_SESSION['user'])) {
+            core()->eventBus->dispatchEvent('onLogOut');
+            unset($_SESSION['user']);
+        }
     }
 
     public function updateTrackingTimestamp()

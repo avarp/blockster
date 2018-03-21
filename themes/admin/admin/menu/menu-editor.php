@@ -47,7 +47,7 @@
                         v-on:click="send"
                         :disabled="errors.length != 0"
                     >
-                        <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/save.svg'?>" alt="icon">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/save.svg'?>" alt="icon">
                         <span class="btn-label"><?=t('Save')?></span>
                     </button>
                 </div>
@@ -59,11 +59,11 @@
                 <div class="toolbar-section">
                     <div class="section-content">
                         <button class="btn btn-default" <?=($transCnt <= 1) ? 'disabled' : ''?> v-on:click="removeTranslation">
-                            <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/remove-translation.svg'?>" alt="icon">
+                            <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/remove-translation.svg'?>" alt="icon">
                             <span class="btn-label"><?=t('Delete')?></span>
                         </button>
                         <button class="btn btn-default" <?=($transCnt < 1) ? 'disabled' : ''?> v-on:click="openTranslationModal">
-                            <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/add-translation.svg'?>" alt="icon">
+                            <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/add-translation.svg'?>" alt="icon">
                             <span class="btn-label"><?=t('Add')?></span>
                         </button>
                     </div>
@@ -75,15 +75,15 @@
             <div class="toolbar-section">
                 <div class="section-content">
                     <button class="btn btn-default" v-on:click="openItemCreateModal">
-                        <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/insert-in-list.svg'?>" alt="icon">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/insert-in-list.svg'?>" alt="icon">
                         <span class="btn-label"><?=t('Add')?></span>
                     </button>
                     <button class="btn btn-default" :disabled="selection.length != 1" v-on:click="openItemEditModal">
-                        <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/pencil.svg'?>" alt="icon">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/pencil.svg'?>" alt="icon">
                         <span class="btn-label"><?=t('Edit')?></span>
                     </button>
                     <button class="btn btn-default" :disabled="selection.length == 0" v-on:click="remove">
-                        <img class="btn-icon" src="<?=core()->getThemeUrl().'/page/images/delete-from-list.svg'?>" alt="icon">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/delete-from-list.svg'?>" alt="icon">
                         <span class="btn-label"><?=t('Delete')?></span>
                     </button>
                     <button class="btn btn-default" onclick="Mov.showDropdown({duration:150, target:'#addition-menu', source:this})">

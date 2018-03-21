@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?=core()->getLang()?>" dir="<?=core()->getLang('dir')?>">
+<html lang="<?=core()->lang['isoCode']?>" dir="<?=core()->lang['direction']?>">
 <head>
  <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

@@ -9,7 +9,7 @@ class Controller extends \modules\Controller
         if (empty($_GET)) {
             $_GET['sqlite'] = '';
             $_GET['username'] = '';
-            $db = core()->getDbh()->row("PRAGMA database_list");
+            $db = core()->dbh->row("PRAGMA database_list");
             $_GET['db'] = str_replace(ROOT_DIR.DS, '', $db['file']);
         }
         for ($i=ob_get_level(); $i>0; $i--) ob_get_clean();
