@@ -58,7 +58,7 @@ function bootModules($dir) {
     foreach ($names as $f) if ($f != '.' && $f != '..') if (is_dir($dir.DS.$f)) {
         bootModules($dir.DS.$f);
     } else {
-        if ($f == 'boot.php') include($dir.DS.$f);
+        if ($f == 'events.php') include($dir.DS.$f);
     }
 }
 

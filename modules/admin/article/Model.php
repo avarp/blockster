@@ -1,6 +1,6 @@
 <?php
 namespace modules\admin\article;
-use core\services\Sqlite;
+use core\Sqlite;
 
 class Model
 {

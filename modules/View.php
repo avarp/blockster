@@ -31,13 +31,14 @@ class View
 
     protected function delayFragment($fragment)
     {
-        echo $this->getDelayedMarker(count($this->delayedFragments));
+        $this->getDelayedMarker(count($this->delayedFragments));
         $this->delayedFragments[] = $fragment;
+        return $this->getDelayedMarker(count($this->delayedFragments)-1);
     }
 
     protected function getDelayedMarker($n)
     {
-        return '~~delayed('.$n.')~~';
+        return '{-{'.$n.'}-}';
     }
 
     public function setTitle($title)

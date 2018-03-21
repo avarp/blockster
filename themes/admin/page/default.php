@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?=core()->getLang('isoCode')?>" dir="<?=core()->getLang('dir')?>">
+<html lang="<?=core()->getLang()?>" dir="<?=core()->getLang('dir')?>">
 <head>
  <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,8 +11,8 @@
     $this->addCssFile(pathToUrl(__DIR__.'/assets/font-awesome/css/font-awesome.min.css'));
     $this->addJsFile(pathToUrl(__DIR__.'/assets/movements.js'));
     $this->addJsFile(pathToUrl(__DIR__.'/script.js'));
-    $this->head();
 ?>
+<?=$this->head()?>
 </head>
 <body>
     <div class="grid padding-1" id="wrap">
@@ -54,6 +54,6 @@
     </div>
     <div id="notification-tray">
     </div>
-<?php $this->scripts(); ?>
+<?=$this->scripts()?>
 </body>
 </html>

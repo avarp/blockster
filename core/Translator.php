@@ -1,5 +1,5 @@
 <?php
-namespace core\services;
+namespace core;
 use \MoReader\Reader;
 
 class TranslatorException extends \Exception{}

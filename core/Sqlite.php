@@ -1,5 +1,5 @@
 <?php
-namespace core\services;
+namespace core;
 
 class Sqlite extends \PDO
 {

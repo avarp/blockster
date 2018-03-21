@@ -14,7 +14,7 @@ class View extends \modules\View
 
     protected function head()
     {
-        $this->delayFragment(function() {
+        return $this->delayFragment(function() {
             echo "\t".'<title>'.$this->data['title'].'</title>';
             if (!empty($this->data['description'])) {
                 echo "\n\t".'<meta name="description" content="'.$this->data['description'].'">';
@@ -40,7 +40,7 @@ class View extends \modules\View
 
     protected function scripts()
     {
-        $this->delayFragment(function() {
+        return $this->delayFragment(function() {
             $this->data['js'] = array_unique($this->data['js'], SORT_REGULAR);
             foreach ($this->data['js'] as $js) {
                 if ($js[1] === true) {

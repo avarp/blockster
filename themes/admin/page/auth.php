@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?=core()->getLang('isoCode')?>" dir="<?=core()->getLang('dir')?>">
+<html lang="<?=core()->getLang()?>" dir="<?=core()->getLang('dir')?>">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,8 +9,8 @@
     $this->addCssFile(pathToUrl(__DIR__.'/assets/ui-elements.css'));
     $this->addCssFile(pathToUrl(__DIR__.'/style.css'));
     $this->addCssFile(pathToUrl(__DIR__.'/assets/font-awesome/css/font-awesome.min.css'));
-    $this->head();
 ?>
+<?=$this->head()?>
 </head>
 <body>
     <?=module('admin/authorization')?>

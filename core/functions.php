@@ -1,11 +1,17 @@
 <?php
 /**
+* Definition of global functions used in system
+* @author Artem Vorobev <artem.v.mailbox@gmail.com>
+*/
+
+
+/**
  * Returns instance of core.
  * @return object instance of core.
  */
 function core()
 {
-   return \core\Blockster::getInstance(); 
+   return \core\System::getInstance(); 
 }
 
 /**

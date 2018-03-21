@@ -1,15 +1,25 @@
 <?php
 namespace core;
 
-class BlocksterException extends \Exception{}
+class SystemException extends \Exception{}
 
-class Blockster
+class System
 {
     private static $instance;
+    private $router;
+    private $translator;
+    public $eventBus;
+    private $dbh;
+    private $positions = array();
+    private $theme;
+    private $lang;
+    private $direction;
+    private $moduleStack = array();
+    private $msgLog = array();
+
+
     private function __clone() {}
     private function __wakeup() {}
-
-
 
 
     public static function getInstance()
@@ -21,12 +31,6 @@ class Blockster
     }
 
 
-
-
-    private $router;
-    private $eventor;
-    private $translator;
-    private $dbh;
     private function __construct()
     {
         $uri = $_SERVER['REQUEST_URI'];
@@ -39,9 +43,9 @@ class Blockster
             $siteUrl = ((!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://').$host;
             define('SITE_URL', $siteUrl);
         }
-        $this->eventor = new services\Eventor;
-        $this->router = new services\Router('routing.json');
-        $this->translator = new services\Translator;
+        $this->router = new Router('routing.json');
+        $this->translator = new Translator;
+        $this->eventBus = new EventBus;
     }
 
 
@@ -57,24 +61,24 @@ class Blockster
 
 
 
-    private $positions = array();
-    private $theme;
-    private $lang;
-    private $direction;
-    private $loadedModels = array();
-    private $moduleStack = array();
-    private $messageLog = array();
+
+
     public function exitResponse($httpQuery=array())
     {
         static $recursionCounter = 0;
         $recursionCounter++;
-        if ($recursionCounter > 10) {
-            throw new BlocksterException('Error in function exitResponse. Recursion is too deep.');
+
+        if ($recursionCounter > 1 && ob_get_level() > 0) {
+            ob_end_clean();
+            $this->moduleStack = array();
+            $this->msgLog = array();
+            $this->positions = array();
+        } elseif ($recursionCounter > 10) {
+            throw new SystemException('Error in function exitResponse. Recursion is too deep.');
         }
 
-        $this->eventor->fire('onSystemStart');
+        $this->eventBus->dispatchEvent('onSystemStart');
 
-        for ($i=ob_get_level(); $i>0; $i--) ob_get_clean();
         if (!isset($httpQuery['uri'])) $httpQuery['uri'] = $this->trimGetParams($_SERVER['REQUEST_URI']);
         if (!isset($httpQuery['host'])) $httpQuery['host'] = $_SERVER['HTTP_HOST'];
         if (!isset($httpQuery['method'])) $httpQuery['method'] = $_SERVER['REQUEST_METHOD'];
@@ -82,21 +86,28 @@ class Blockster
 
         $route = $this->router->findRoute($httpQuery);
         if (empty($route) && $httpQuery['status'] == 404) {
-            throw new BlocksterException('Error in function exitResponse. Nothing to show. Please check routing map.');
+            throw new SystemException('Error in function exitResponse. Nothing to show. Please check routing map.');
         }
         if (empty($route)) $this->exitResponse(array('status' => 404));
 
-        $route = $this->eventor->fire('onRoutingDone', $route);
+        $route = $this->eventBus->dispatchEventFilter('onRoutingDone', $route);
 
         if (!isset($route['theme']) || !is_dir(ROOT_DIR.DS.'themes'.DS.$route['theme'])) {
-            throw new BlocksterException('Error in function exitResponse. Theme directory is not specified or exists.');
+            throw new SystemException('Error in function exitResponse. Theme directory is not specified or exists.');
         }
         $this->theme = $route['theme'];
         if (!isset($route['module'])) {
-            throw new BlocksterException('Error in function exitResponse. Root module is not specified.');
+            throw new SystemException('Error in function exitResponse. Root module is not specified.');
         }
-        $this->eventor->importHandlers($route['events']);
+        
+        if (isset($route['events'])) $this->eventBus->importEventHandlers($route['events']);
 
+        if (isset($route['data'])) {
+            $this->dbh = new Sqlite('data'.DS.$route['data']);
+        } else {
+            $this->dbh = new Sqlite('data'.DS.'default.db');
+        }
+        
         if (isset($route['lang'])) {
             $l = $route['lang'];
         } else {
@@ -107,20 +118,14 @@ class Blockster
             arsort($langs);
             $l = key($langs);
         }
-        if (isset($route['data'])) {
-            $this->dbh = new services\Sqlite('data'.DS.$route['data']);
-        } else {
-            $this->dbh = new services\Sqlite('data'.DS.'default.db');
-        }
         $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
         if (!$this->lang) $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));
         if (!$this->lang) $this->lang = $this->dbh->row("SELECT * FROM languages WHERE isoCode='en'");
 
-        $this->positions = $route['positions'];
-        $this->moduleStack = array();
-        $this->messageLog = array();
+        if (isset($route['positions'])) $this->positions = $route['positions'];
+
         $response = $this->loadModule($route['module']['name'], $route['module']['params']);
-        $response = $this->eventor->fire('onExit', $response);
+        $response = $this->eventBus->dispatchEventFilter('onExit', $response);
 
         $httpStatusCodes = array(
             404 => 'Not Found',
@@ -198,12 +203,26 @@ class Blockster
 
 
 
+
+
+    public function isModuleExists($name) {
+        $a = explode('::', $name);
+        $action = isset($a[1])? 'action_'.$a[1] : 'action_default';
+        $namespace = str_replace('/', '\\', DS.'modules'.DS.$a[0]);
+        $controllerClass = $namespace.'\\Controller';
+        return class_exists($controllerClass) && method_exists($controllerClass, $action);
+    }
+
+
+
+
+
     public function loadModule($name, $params)
     {
         static $recursionCounter = 0;
         $recursionCounter++;
         if ($recursionCounter > 25) {
-            throw new BlocksterException('Error in function loadModule. Recursion is too deep.');
+            throw new SystemException('Error in function loadModule. Recursion is too deep.');
         }
 
         $a = explode('::', $name);
@@ -215,10 +234,10 @@ class Blockster
 
         //test on fatal errors
         if (!class_exists($controllerClass)) {
-            throw new BlocksterException('Error in function loadModule. The Controller class of module "'.$name.'" is not defined');
+            throw new SystemException('Error in function loadModule. The Controller class of module "'.$name.'" is not defined');
         }
         if (!method_exists($controllerClass, $action)) {
-            throw new BlocksterException('Error in function loadModule. The '.$action.' method is not defined in Controller class of module "'.$name.'"');
+            throw new SystemException('Error in function loadModule. The '.$action.' method is not defined in Controller class of module "'.$name.'"');
         }
 
         //put the module into stack
@@ -237,10 +256,8 @@ class Blockster
         
         //load Model
         $modelClass = $namespace.'\\Model';
-        if (isset($this->loadedModels[$modelClass])) {
-            $model = $this->loadedModels[$modelClass];
-        } elseif (class_exists($modelClass)) {
-            $model = $this->loadedModels[$modelClass] = new $modelClass();
+        if (class_exists($modelClass)) {
+            $model = new $modelClass();
         } else {
             $model = null;
         }
@@ -248,12 +265,10 @@ class Blockster
         //load Controller
         $controller = new $controllerClass($view, $model);
         $this->moduleStack[count($this->moduleStack)-1]['controller'] = $controller;
-        
+        $this->eventBus->dispatchEvent('onModuleLoad', compact('name', 'params'));
 
         //call action of controller
         $output = $controller->$action($params);
-        $args = compact('name', 'params');
-        $this->eventor->fire('onLoadModule', $args);
 
         //pop the module from stack
         $m = array_pop($this->moduleStack);
@@ -268,15 +283,15 @@ class Blockster
             // write cache
             $cache = array(
                 'output' => $output,
-                'messages' => $this->messageLog
+                'messages' => $this->msgLog
             );
             if (!is_dir($m['cacheDir'])) mkdir($m['cacheDir'], 0700, true);
             $f = $m['cacheDir'].DS.$m['cacheFile'];
             file_put_contents($f, serialize($cache));
-            $this->messageLog = array();
+            $this->msgLog = array();
         }
 
-        $output = $this->eventor->fire('onModuleOutput', $output);
+        $output = $this->eventBus->dispatchEventFilter('onModuleOutput', $output);
         $recursionCounter--;
         return $output;
     }
@@ -284,13 +299,21 @@ class Blockster
 
 
 
-    public function isModuleExists($name) {
-        $a = explode('::', $name);
-        $action = isset($a[1])? 'action_'.$a[1] : 'action_default';
-        $namespace = str_replace('/', '\\', DS.'modules'.DS.$a[0]);
-        $controllerClass = $namespace.'\\Controller';
-        return class_exists($controllerClass) && method_exists($controllerClass, $action);
+    public function loadPosition($posName)
+    {
+        if (isset($this->positions[$posName])) {
+            $modules = $this->positions[$posName];
+            $output = '';
+            foreach ($modules as $module) {
+                $output .= $this->loadModule(
+                    $module['name'],
+                    $module['params']
+                );
+            }
+            return $output;
+        }
     }
+
 
 
 
@@ -318,7 +341,7 @@ class Blockster
 
     public function broadcastMessage($message, $param='')
     {
-        $this->messageLog[] = compact('message', 'param');
+        $this->msgLog[] = compact('message', 'param');
         for ($i = count($this->moduleStack)-1; $i>=0; $i--) {
             $m = $this->moduleStack[$i];
             if (method_exists($m['controller'], 'acceptMessage')) $m['controller']->acceptMessage($message, $param);
@@ -328,27 +351,10 @@ class Blockster
 
 
 
-    public function loadPosition($posName)
-    {
-        if (isset($this->positions[$posName])) {
-            $modules = $this->positions[$posName];
-            $output = '';
-            foreach ($modules as $module) {
-                $output .= $this->loadModule(
-                    $module['name'],
-                    $module['params']
-                );
-            }
-            return $output;
-        }
-    }
-
-
-
 
     private function getThisMoFile() {
         if (empty($this->moduleStack)) {
-            throw new BlocksterException('Translation possible only in context of module.');
+            throw new SystemException('Translation possible only in context of module.');
         }
         $moFile = $this->moduleStack[count($this->moduleStack)-1]['tplDir'].DS.'locale'.DS.$this->lang['isoCode'].'.mo';
         if (!file_exists($moFile)) {
@@ -380,4 +386,5 @@ class Blockster
         $moFile = $this->getThisMoFile();
         return $this->translator->getTranslatorForJs($moFile);
     }
+
 }

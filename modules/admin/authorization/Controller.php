@@ -1,5 +1,6 @@
 <?php
 namespace modules\admin\authorization;
+
 const ONLINE_FLAG_LIFETIME = 900;//15 min
 
 class Controller extends \modules\Controller
@@ -27,16 +28,6 @@ class Controller extends \modules\Controller
     public function action_trackingUsers()
     {
         if (isset($_SESSION['user'])) $this->model->updateTrackingTimestamp();
-    }
-
-    public static function logOutByPost()
-    {
-        if (isset($_POST['logOut'])) {
-            $model = new Model;
-            $model->logOut();
-            header('Location: '.$_SERVER['REQUEST_URI']);
-            die();
-        } 
     }
 
     public static function addTrackingScript($module)
