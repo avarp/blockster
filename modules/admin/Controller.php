@@ -11,7 +11,7 @@ class Controller extends \modules\Controller
         $actions = explode('/', $params['adminUrl']);
         if ($actions) for ($i=count($actions)-1; $i>=0; $i--) {
             if ($i > 0) {
-                $name = 'admin/'.implode('/', array_slice($actions, 0, $i)).'::action_'.$actions[$i];
+                $name = 'admin/'.implode('/', array_slice($actions, 0, $i)).'::'.$actions[$i];
                 $params = array_slice($actions, $i+1);
             } else {
                 $name = 'admin/'.implode('/', array_slice($actions, 0, $i+1));
