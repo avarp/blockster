@@ -7,6 +7,7 @@ class System
 {
     private static $instance;
     private $router;
+    private $routeName;
     private $translator;
     private $eventBus;
     private $dbh;
@@ -51,7 +52,12 @@ class System
             $siteUrl = ((!isset($_SERVER['HTTPS']) || empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') ? 'http://' : 'https://').$host;
             define('SITE_URL', $siteUrl);
         }
-        $this->router = new Router('routing.json');
+
+        $compiler = new routing\RoutingCompiler;
+        $routes = $compiler->compile('routing.json');
+        file_put_contents('core/routing/compiled.json', jsonFmt(json_encode($routes)));
+
+        $this->router = new routing\Router($routes);
         $this->translator = new Translator;
         $this->eventBus = new EventBus;
     }
@@ -69,13 +75,10 @@ class System
 
 
 
-
-
-    public function exitResponse($httpQuery=array())
+    private function resetSystem()
     {
         static $recursionCounter = 0;
         $recursionCounter++;
-
         if ($recursionCounter > 1 && ob_get_level() > 0) {
             ob_end_clean();
             $this->moduleStack = array();
@@ -84,59 +87,13 @@ class System
         } elseif ($recursionCounter > 10) {
             throw new SystemException('Error in function exitResponse. Recursion is too deep.');
         }
+    }
 
-        $this->eventBus->dispatchEvent('onSystemStart');
 
-        if (!isset($httpQuery['uri'])) $httpQuery['uri'] = $this->trimGetParams($_SERVER['REQUEST_URI']);
-        if (!isset($httpQuery['host'])) $httpQuery['host'] = $_SERVER['HTTP_HOST'];
-        if (!isset($httpQuery['method'])) $httpQuery['method'] = $_SERVER['REQUEST_METHOD'];
-        if (!isset($httpQuery['status'])) $httpQuery['status'] = 200;
 
-        $route = $this->router->findRoute($httpQuery);
-        if (empty($route) && $httpQuery['status'] == 404) {
-            throw new SystemException('Error in function exitResponse. Nothing to show. Please check routing map.');
-        }
-        if (empty($route)) $this->exitResponse(array('status' => 404));
 
-        $route = $this->eventBus->dispatchEventFilter('onRouting', $route);
-        if (!isset($route['module'])) {
-            throw new SystemException('Error in function exitResponse. Root module is not specified.');
-        }
-        if (!isset($route['theme']) || !is_dir(ROOT_DIR.DS.'themes'.DS.$route['theme'])) {
-            throw new SystemException('Error in function exitResponse. Theme directory is not specified or exists.');
-        }
-        $this->theme = $route['theme'];
-        $this->themeUrl = SITE_URL.'/themes/'.$this->theme;
-        
-        
-        if (isset($route['events'])) $this->eventBus->importEventHandlers($route['events']);
-
-        if (isset($route['data'])) {
-            $this->dbh = new Sqlite('data'.DS.$route['data']);
-        } else {
-            $this->dbh = new Sqlite('data'.DS.'default.db');
-        }
-        
-        if (isset($route['lang'])) {
-            $l = $route['lang'];
-        } else {
-            // get language from browser's info
-            preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)(?:;q=([0-9.]+))?/i', $_SERVER["HTTP_ACCEPT_LANGUAGE"], $matches);
-            $langs = array_combine($matches[1], $matches[2]);
-            foreach ($langs as $n => $v) $langs[$n] = $v ? $v : 1;
-            arsort($langs);
-            $l = key($langs);
-        }
-        $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
-        if (!$this->lang) $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));
-        if (!$this->lang) $this->lang = $this->dbh->row("SELECT * FROM languages WHERE isoCode='en'");
-
-        if (isset($route['positions'])) $this->positions = $route['positions'];
-
-        $this->eventBus->dispatchEvent('onRoutingDone');
-        $response = $this->loadModule($route['module']['name'], $route['module']['params']);
-        $response = $this->eventBus->dispatchEventFilter('onExit', $response);
-
+    private function postprocessResponse($httpQuery, $response)
+    {
         $httpStatusCodes = array(
             404 => 'Not Found',
             403 => 'Forbidden'
@@ -168,7 +125,78 @@ class System
             $response = json_encode($response);
             break;
         }
-        exit($response);
+        return $response;
+    }
+
+
+
+
+    private function getAcceptLanguage()
+    {
+        preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)(?:;q=([0-9.]+))?/i', $_SERVER["HTTP_ACCEPT_LANGUAGE"], $matches);
+        $langs = array_combine($matches[1], $matches[2]);
+        foreach ($langs as $n => $v) $langs[$n] = $v ? $v : 1;
+        arsort($langs);
+        return key($langs);
+    }
+
+
+
+
+    public function exitResponse($httpQuery=array())
+    {
+        $this->resetSystem();
+        $this->eventBus->dispatchEvent('onSystemStart');
+
+        // fill defaults
+        if (!isset($httpQuery['uri'])) $httpQuery['uri'] = SITE_URL.$this->trimGetParams($_SERVER['REQUEST_URI']);
+        if (!isset($httpQuery['method'])) $httpQuery['method'] = $_SERVER['REQUEST_METHOD'];
+        if (!isset($httpQuery['status'])) $httpQuery['status'] = 200;
+
+        $route = $this->router->findRoute($httpQuery);
+
+        if (empty($route) && $httpQuery['status'] == 404) {
+            throw new SystemException('Error in function exitResponse. Nothing to show. Please check routing map.');
+        }
+        if (empty($route)) $this->exitResponse(array('status' => 404));
+
+        $route = $this->eventBus->dispatchEventFilter('onRouting', $route);
+        $this->routeName = $route['name'];
+        $content = $route['content'];
+        
+        // check fatal errors in content
+        if (!isset($content['module'])) {
+            throw new SystemException('Error in function exitResponse. Root module is not specified.');
+        }
+        if (!$this->isModuleExists($content['module']['name'])) {
+            throw new SystemException('Error in function exitResponse. Root module is not exists.');
+        }
+        if (!isset($content['theme'])) {
+            throw new SystemException('Error in function exitResponse. Theme directory is not specified.');
+        }
+        if (!is_dir(ROOT_DIR.DS.'themes'.DS.$content['theme'])) {
+            throw new SystemException("Error in function exitResponse. Theme directory \"$content[theme]\" is not exists.");
+        }
+
+        $this->theme = $content['theme'];
+        $this->themeUrl = SITE_URL.'/themes/'.$this->theme;        
+        $this->dbh = new Sqlite('data'.DS.'default.db');
+        
+        // detect language
+        $l = isset($content['lang']) ? $content['lang'] : $this->getAcceptLanguage();
+        $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
+        if (!$this->lang) $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));
+        if (!$this->lang) $this->lang = $this->dbh->row("SELECT * FROM languages WHERE isoCode='en'");
+
+        if (isset($content['events'])) $this->eventBus->importEventHandlers($route['events']);
+        if (isset($content['positions'])) $this->positions = $content['positions'];
+
+        // call root module
+        $this->eventBus->dispatchEvent('onRoutingDone');
+        $response = $this->loadModule($content['module']['name'], $content['module']['params']);
+        $response = $this->eventBus->dispatchEventFilter('onExit', $response);
+
+        exit($this->postprocessResponse($httpQuery, $response));
     }
 
 
@@ -207,10 +235,12 @@ class System
         }
 
         $a = explode('::', $name);
-        $cacheDir = ROOT_DIR.DS.'temp'.DS.'cache'.DS.$a[0];
-        $tplDir = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$a[0];
-        $action = isset($a[1])? 'action_'.$a[1] : 'action_default';
-        $namespace = str_replace('/', '\\', DS.'modules'.DS.$a[0]);
+
+        $cacheDir        = ROOT_DIR.DS.'temp'.DS.'cache'.DS.$a[0];
+        $tplDir          = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$a[0];
+        $moduleName      = $a[0];
+        $action          = isset($a[1])? 'action_'.$a[1] : 'action_default';
+        $namespace       = str_replace('/', '\\', DS.'modules'.DS.$a[0]);
         $controllerClass = $namespace.'\\Controller';
 
         //test on fatal errors
@@ -223,11 +253,10 @@ class System
 
         //put the module into stack
         $this->moduleStack[] = array(
-            'tplDir' => $tplDir,
+            'name' => $moduleName,
+            'action' => $action,
             'controller' => null,
-            'cacheDir' => $cacheDir,
-            'cacheFile' => '',
-            'cacheExists' => false        
+            'cache' => ''
         );
 
         //load View
@@ -255,22 +284,23 @@ class System
         //pop the module from stack
         $m = array_pop($this->moduleStack);
 
-        if (!empty($m['cacheFile'])) if ($m['cacheExists']) {
-            // read cache
-            $f = $m['cacheDir'].DS.$m['cacheFile'];
-            $cache = unserialize(file_get_contents($f));
-            $output = $cache['output'];
-            foreach ($cache['messages'] as $m) $this->broadcastMessage($m['message'], $m['param']);
-        } else {
-            // write cache
-            $cache = array(
-                'output' => $output,
-                'messages' => $this->msgLog
-            );
-            if (!is_dir($m['cacheDir'])) mkdir($m['cacheDir'], 0700, true);
-            $f = $m['cacheDir'].DS.$m['cacheFile'];
-            file_put_contents($f, serialize($cache));
-            $this->msgLog = array();
+        if (!empty($m['cache'])) {
+            $cacheFile = $cacheDir.DS.$m['cache'];
+            if (file_exists($cacheFile)) {
+                // read cache
+                $cache = unserialize(file_get_contents($cacheFile));
+                $output = $cache['output'];
+                foreach ($cache['messages'] as $msg) $this->broadcastMessage($msg['message'], $msg['param']);
+            } else {
+                // write cache
+                $cache = array(
+                    'output' => $output,
+                    'messages' => $this->msgLog
+                );
+                if (!is_dir($cacheDir)) mkdir($cacheDir, 0700, true);
+                file_put_contents($cacheFile, serialize($cache));
+                $this->msgLog = array();
+            }
         }
 
         $output = $this->eventBus->dispatchEventFilter('onModuleOutput', $output);
@@ -302,17 +332,15 @@ class System
 
     public function useCache($file, $lifetime=3600)
     {
-        if (empty($file) || $lifetime < 60 || empty($this->moduleStack)) return false;
+        if (empty($file) || $lifetime < 60) return false;
         $n = count($this->moduleStack) - 1;
+        if ($n < 0) throw new SystemException('Function useCache called not in context of module.');
+        $this->moduleStack[$n]['cache'] = $file;
 
-        $this->moduleStack[$n]['cacheFile'] = $file;
-        $f = $this->moduleStack[$n]['cacheDir'].DS.$file;
-
+        $f = ROOT_DIR.DS.'temp'.DS.'cache'.DS.$this->moduleStack[$n]['name'].DS.$file;
         if (file_exists($f) && filemtime($f)+$lifetime > time()) {
-            $this->moduleStack[$n]['cacheExists'] = true;
             return true;
         } else {
-            $this->moduleStack[$n]['cacheExists'] = false;
             @unlink($f);
             return false;
         }
@@ -338,10 +366,11 @@ class System
         if (empty($this->moduleStack)) {
             throw new SystemException('Translation possible only in context of module.');
         }
-        $moFile = $this->moduleStack[count($this->moduleStack)-1]['tplDir'].DS.'locale'.DS.$this->lang['isoCode'].'.mo';
+        $localeDir = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$this->moduleStack[count($this->moduleStack)-1]['name'].DS.'locale';
+        $moFile = $localeDir.DS.$this->lang['isoCode'].'.mo';
         if (!file_exists($moFile)) {
             $l = explode('-', $this->lang['isoCode']);
-            $moFile = $this->moduleStack[count($this->moduleStack)-1]['tplDir'].DS.'locale'.DS.$l[0].'.mo';
+            $moFile = $localeDir.DS.$l[0].'.mo';
         }
         return $moFile;
     }

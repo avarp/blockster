@@ -15,15 +15,15 @@ class Model
 
 
     /**
-     * Get language for new menu
+     * Get language id for new menu
      * @return string ISO code of language, which is active in system
      */
-    protected function detectLanguage()
+    protected function detectLanguageId()
     {
-        $l = core()->getLang('isoCode');
-        $c = $this->dbh->value('SELECT COUNT(isoCode) FROM languages WHERE isoCode=? AND isActive=1', array($l));
+        $l = core()->lang['id'];
+        $c = $this->dbh->value('SELECT COUNT(id) FROM languages WHERE id=? AND isActive=1', array($l));
         if ($c > 0) return $l;
-        return $this->dbh->value('SELECT isoCode FROM languages WHERE isActive=1 LIMIT 1');
+        return $this->dbh->value('SELECT id FROM languages WHERE isActive=1 LIMIT 1');
     }
 
     /**
@@ -33,17 +33,17 @@ class Model
      * @param string $lang language of new menu
      * @return array new menu
      */
-    public function createMenu($sysname='', $lang='')
+    public function createMenu($sysname='', $langId=0)
     {
         if (empty($sysname)) $sysname = 'menu-'.time();
-        if (empty($lang)) $lang = $this->detectLanguage();
+        if (empty($langId)) $langId = $this->detectLanguageId();
 
         return array(
             'id' => 0,
-            'label' => t('New menu'),
+            'langId' => $langId,
             'sysname' => $sysname,
-            'lang' => $lang,
-            'children' => array(),
+            'name' => t('New menu'),
+            'children' => array()
         );
     }
 
@@ -57,54 +57,37 @@ class Model
      */
     public function getListOfMenu()
     {
-        $userLang = core()->lang['isoCode'];
-        $menus = $this->dbh->table('SELECT label, href as "sysname" FROM menu WHERE parentId=0 AND customField=?', array($userLang));
+        $userLang = core()->lang['id'];
+        $menus = $this->dbh->table('SELECT name, sysname FROM menu WHERE langId=?', array($userLang));
         $userLangLabels = array();
         foreach ($menus as $m) {
-            $userLangLabels[$m['sysname']] = $m['label'];
+            $userLangLabels[$m['sysname']] = $m['name'];
         }
 
-        $menus = $this->dbh->table('SELECT label, href as "sysname", group_concat(customField) as langs FROM menu WHERE parentId=0 GROUP BY href');
+        $menus = $this->dbh->table('
+            SELECT menu.name, menu.sysname, group_concat(menu.id) as ids, group_concat(languages.isoCode) as langs
+            FROM menu
+            INNER JOIN languages ON menu.langId=languages.id
+            GROUP BY menu.sysname
+        ');
         foreach ($menus as $n=>$m) {
             $menus[$n]['langs'] = explode(',', $m['langs']);
+            $menus[$n]['ids'] = explode(',', $m['ids']);
             if (isset($userLangLabels[$m['sysname']])) $menus[$n]['label'] = $userLangLabels[$m['sysname']];
         }
         return $menus;
     }
 
-    /**
-     * Get raw tree of menu
-     * @uses function fetchTree recursively
-     * @param integer $id id of root record (same as id of menu)
-     * @return array raw menu tree
-     */
-    protected function fetchTree($id) {
-        $menu = $this->dbh->row('SELECT id, accessLevel, customField, label, href FROM menu WHERE id=?', array($id));
-        if (!$menu) return $menu;
-        $menu['children'] = array();
-        $childIds = $this->dbh->table('SELECT id FROM menu WHERE parentId=? ORDER BY ordNum ASC', array($id));
-        foreach ($childIds as $child) {
-            $menu['children'][] = $this->fetchTree($child['id']);
-        }
-        return $menu;
-    }
     
     /**
      * Get menu by id. Fetch tree and adjust fields of root element
-     * @uses function fetchTree
      * @param integer $id id of menu
      * @return array menu
      */
     public function getMenuById($id)
     {
-        $menu = $this->fetchTree($id);
-        $menu['sysname'] = $menu['href'];
-        $menu['lang'] = $menu['customField'];
-        unset($menu['accessLevel']);
-        unset($menu['ordNum']);
-        unset($menu['parentId']);
-        unset($menu['href']);
-        unset($menu['customField']);
+        $menu = $this->dbh->row("SELECT * FROM menu WHERE id=$id LIMIT 1");
+        if ($menu) $menu['children'] = json_decode($menu['children'], true);
         return $menu;
     }
 
@@ -112,49 +95,21 @@ class Model
      * Get menu by sysname and language
      * @uses function getMenuById
      * @param string $sysname system name of menu
-     * @param string $lang language of menu
+     * @param string $langId language id of menu
      * @return array menu
      */
-    public function getMenuBySysname($sysname, $lang)
+    public function getMenuBySysname($sysname, $langId=0)
     {
-        $menuId = $this->dbh->value('SELECT id FROM menu WHERE href=? AND customField=? AND parentId=0 LIMIT 1', array($sysname, $lang));
+        if ($langId) {
+            $menuId = $this->dbh->value('SELECT id FROM menu WHERE sysname=? AND langId=? LIMIT 1', array($sysname, $langId));
+        } else {
+            $menuId = $this->dbh->value('SELECT id FROM menu WHERE sysname=? LIMIT 1', array($sysname));
+        }
         if ($menuId) {
             return $this->getMenuById($menuId);
         } else {
             return array();
         }
-    }
-
-    /**
-     * Get info about menu by id
-     * @param integer $id id of menu
-     * @return array info about menu
-     */
-    public function getMenuInfoById($id)
-    {
-        return $this->dbh->row('
-            SELECT id, label, href as "sysname", customField as lang
-            FROM menu 
-            WHERE id=? AND parentId=0
-            LIMIT 1',
-        array($id));
-    }
-
-    /**
-     * Get info about menu by sysname and language
-     * @uses function getMenuInfoById
-     * @param string $sysname system name of menu
-     * @param string $lang language of menu
-     * @return array info about menu
-     */
-    public function getMenuInfoBySysname($sysname, $lang='')
-    {
-        if (!empty($lang)) {
-            $menuId = $this->dbh->value('SELECT id FROM menu WHERE href=? AND customField=? AND parentId=0 LIMIT 1', array($sysname, $lang));
-        } else {
-            $menuId = $this->dbh->value('SELECT id FROM menu WHERE href=? AND parentId=0 LIMIT 1', array($sysname));
-        }
-        return $this->getMenuInfoById($menuId);
     }
 
     /**
@@ -167,8 +122,8 @@ class Model
     {
         $list = $this->dbh->table('SELECT * FROM languages WHERE isActive=1');
         foreach ($list as $n=>$l) {
-            $list[$n]['isTranslated'] = 
-                $this->dbh->value('SELECT COUNT(id) FROM menu WHERE href=? AND customField=?', array($sysname, $l['isoCode'])) != 0;
+            $list[$n]['menuId'] = 
+                $this->dbh->value('SELECT id FROM menu WHERE sysname=? AND langId=?', array($sysname, $l['id']));
         }
         return $list;
     }
@@ -178,107 +133,46 @@ class Model
 
 
     /**
-     * Get plain array of ids of children of menu in database
-     * @uses function listChildrenIdsFromDb recursively
-     * @param integer $parentId id of menu
-     * @return array list of ids
-     */
-    protected function listChildrenIdsFromDb($parentId) {
-        $ids = array();
-        $children = $this->dbh->table('SELECT id FROM menu WHERE parentId=?', array($parentId));
-        foreach ($children as $child) {
-            $ids = array_merge($ids, array($child['id']), $this->listChildrenIdsFromDb($child['id']));
-        }
-        return $ids;
-    }
-
-    /**
-     * Get plain array of ids of children of menu is to be saved
-     * @uses function listChildrenIdsFromArr recursively
-     * @param array $menu menu is to be saved
-     * @return array list of ids
-     */
-    protected function listChildrenIdsFromArr($menu) {
-        $ids = array();
-        foreach ($menu['children'] as $child) {
-            $ids = array_merge($ids, array($child['id']), $this->listChildrenIdsFromArr($child));
-        }
-        return $ids;
-    }
-
-    /**
-     * Recursive save items of menu
-     * @uses function saveChildren recursively
-     * @param array $children list of menuitems
-     * @param integer $parentId id of their parent
-     * @return void
-     */
-    protected function saveChildren($children, $parentId) {
-        foreach ($children as $ordNum => $child) {
-            $child['ordNum'] = $ordNum;
-            $child['parentId'] = $parentId;
-            if ($child['id'] == 0) {
-                $this->dbh->exec('INSERT INTO menu (accessLevel, customField, label, href, ordNum, parentId) VALUES (:accessLevel, :customField, :label, :href, :ordNum, :parentId)' , $child);
-                $child['id'] = $this->dbh->lastInsertId();
-            } else {
-                $this->dbh->exec('UPDATE menu SET accessLevel=:accessLevel, customField=:customField, label=:label, href=:href, ordNum=:ordNum, parentId=:parentId WHERE id=:id', $child);
-            }
-            $this->saveChildren($child['children'], $child['id']);
-        }
-    }
-
-    /**
      * Save menu
-     * @uses function listChildrenIdsFromDb
-     * @uses function listChildrenIdsFromArr
-     * @uses function saveChildren
      * @param array $menu menu is to be saved
      * @return integer id of saved menu
      */
     public function saveMenu($menu) {
+        $menu['children'] = json_encode($menu['children']);
         if ($menu['id'] == 0) {
-            $this->dbh->exec('INSERT INTO menu (customField, label, href) VALUES (:lang, :label, :sysname)', $menu);
+            $this->dbh->exec('
+                INSERT INTO menu
+                (langId, sysname, name, children) 
+                VALUES (:langId, :sysname, :name, :children)
+            ', $menu);
             $menu['id'] = $this->dbh->lastInsertId();
         } else {
-            $sysname = $this->dbh->value('SELECT href FROM menu WHERE id=?', array($menu['id']));
+            $sysname = $this->dbh->value('SELECT sysname FROM menu WHERE id=?', array($menu['id']));
             if ($sysname != $menu['sysname']) {
-                $this->dbh->exec('UPDATE menu SET href=? WHERE href=?', array($menu['sysname'], $sysname));
+                $this->dbh->exec('UPDATE menu SET sysname=? WHERE sysname=?', array($menu['sysname'], $sysname));
             }
-            $this->dbh->exec('UPDATE menu SET customField=:lang, label=:label, href=:sysname WHERE id=:id', $menu);
-            $inDb = $this->listChildrenIdsFromDb($menu['id']);
-            $inArr = $this->listChildrenIdsFromArr($menu);
-            $toDelete = array_diff($inDb, $inArr);
-            $this->dbh->exec('DELETE FROM menu WHERE id IN ('.implode(',', $toDelete).')');
+            $this->dbh->exec('
+                UPDATE menu SET
+                langId=:langId, sysname=:sysname, name=:name, children=:children
+                WHERE id=:id
+            ', $menu);
         }
-        $this->saveChildren($menu['children'], $menu['id']);
         return $menu['id'];
     }
 
-    /**
-     * Recursively reset all ids as zero in menu tree
-     * @uses function resetIds recursively
-     * @return array menu
-     */
-    protected function resetIds($menu)
-    {
-        $menu['id'] = 0;
-        if (!empty($menu['children'])) foreach ($menu['children'] as $n=>$child) $menu['children'][$n] = $this->resetIds($child);
-        return $menu;
-    }
 
     /**
      * Save copy of menu with specified sysname and language 
-     * @uses function saveChildren
-     * @uses function resetIds
+     * @uses function saveMenu
      * @param array $menu menu is to be copied
      * @param string $sysname new sysname
-     * @param string $lang new lang
+     * @param string $langId new language id
      * @return integer id of saved menu
      */
-    public function saveMenuAs($menu, $sysname, $lang) {
-        $menu = $this->resetIds($menu);
+    public function saveMenuAs($menu, $sysname, $langId) {
         $menu['sysname'] = $sysname;
-        $menu['lang'] = $lang;
+        $menu['langId'] = $langId;
+        $menu['id'] = 0;
         return $this->saveMenu($menu);
     }
 
@@ -288,26 +182,21 @@ class Model
 
     /**
      * Delete menu by id
-     * @uses function deleteMenuById recursively
      * @param integer $id id of menu
      * @return void
      */
     public function deleteMenuById($id)
     {
-        $menuitem = $this->dbh->exec('DELETE FROM menu WHERE id=?', array($id));
-        $childs = $this->dbh->table('SELECT id FROM menu WHERE parentId=?', array($id));
-        foreach ($childs as $child) $this->deleteMenuById($child['id']);        
+        $this->dbh->exec('DELETE FROM menu WHERE id=?', array($id));
     }
 
     /**
      * Delete menu(s) by sysname
-     * @uses function deleteMenuById
      * @param string $sysname system name of menu
      * @return void
      */
     public function deleteMenuBySysname($sysname)
     {
-        $menus = $this->dbh->table('SELECT id FROM menu WHERE href=?', array($sysname));
-        foreach ($menus as $m) $this->deleteMenuById($m['id']);     
+        $this->dbh->exec('DELETE FROM menu WHERE sysname=?', array($sysname));
     }       
 }

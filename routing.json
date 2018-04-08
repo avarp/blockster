@@ -1,80 +1,121 @@
 {
-    "error-404":{
+    "error404":{
         "selector":{
-            "status":"404"
+            "status":404
         },
         "content":{
+            "theme":"default",
             "module":{
                 "name":"page",
                 "params":{"template":"404.php"}
-            },
-            "theme":"default"
+            }
         }
     },
-    "error-403":{
+    "error403":{
         "selector":{
-            "status":"403"
+            "status":403
         },
         "content":{
+            "theme":"admin",
             "module":{
                 "name":"page",
                 "params":{"template":"auth.php"}
-            },
-            "theme":"admin"
+            }
         }
     },
     "ajax":{
-        "schema":"{SITE_URL}/ajax/{0}",
         "selector":{
-            "uri":"/ajax/(.+)"
+            "uri":"/ajax/{moduleName}",
+            "params":{
+                "moduleName":{"type":"any"}
+            }
         },
         "content":{
+            "theme":"admin",
             "module":{
                 "name":"ajax",
-                "params":{"moduleName":"{0}"}
-            },
-            "theme":"admin"
+                "params":{"moduleName":"{moduleName}"}
+            }
         }
     },
     "adminer":{
-        "schema":"{SITE_URL}/adminer",
         "selector":{
             "uri":"/adminer"
         },
         "content":{
+            "theme":"admin",
             "module":{
                 "name":"admin/adminer",
                 "params":{}
-            },
-            "theme":"admin"
-        }
-    },
-    "admin":{
-        "schema":"{SITE_URL}/admin/{0}",
-        "selector":{
-            "uri":"/admin/?(.*)"
-        },
-        "content":{
-            "module":{
-                "name":"page",
-                "params":{"template":"default.php"}
-            },
-            "theme":"admin",
-            "positions":{
-                "content":[{"name":"admin", "params":{"adminUrl":"{0}"}}]
             }
         }
     },
-    "other":{
+    "admin/dashboard":{
         "selector":{
-            "uri":".+"
+            "uri":"/admin"
         },
         "content":{
+            "theme":"admin",
             "module":{
                 "name":"page",
                 "params":{"template":"default.php"}
             },
-            "theme":"default"
+            "positions":{
+                "content":[{"name":"admin/dashboard", "params":{}}]
+            }
+        }
+    },
+    "admin/menu":{
+        "selector":{
+            "uri":"/admin/menu/{action}/{id}",
+            "params":{
+                "action":{"type":"variants", "variants":["new"], "optional":true, "default":"default"},
+                "id":{"type":"numeric", "optional":true}
+            }
+        },
+        "content":{
+            "theme":"admin",
+            "module":{
+                "name":"page",
+                "params":{"template":"default.php"}
+            },
+            "positions":{
+                "content":[{"name":"admin/menu::{action}", "params":{"id":"{id}"}}]
+            }
+        }
+    },
+    "admin/articles":{
+        "selector":{
+            "uri":"/admin/articles/{action}/{id}",
+            "params":{
+                "action":{"type":"string", "optional":true, "default":"default"},
+                "id":{"type":"numeric"}
+            }
+        },
+        "content":{
+            "theme":"admin",
+            "module":{
+                "name":"page",
+                "params":{"template":"default.php"}
+            },
+            "positions":{
+                "content":[{"name":"admin/menu::{action}", "params":{"id":"{id}", "parentId":"{id}"}}]
+            }
+        }
+    },
+    "articles":{
+        "selector":{
+            "uri":"{uri}",
+            "params":{
+                "uri":{"type":"any"}
+            }
+        },
+        "content":{
+            "theme":"default",
+            "module":{
+                "name":"page",
+                "params":{"template":"default.php"}
+            }
         }
     }
 }

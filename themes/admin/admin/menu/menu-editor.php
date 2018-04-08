@@ -11,25 +11,48 @@
 
         <?php if ($transCnt > 1) { ?>
             <ul class="tabs tabs-primary">
-            <?php foreach ($languages as $l) if ($l['isTranslated']) if ($l['isoCode'] == $menu['lang']) { ?>
-                <li class="active"><?=$l['nativeName']?></li>
+            <?php foreach ($languages as $lang) if ($lang['menuId']) if ($lang['menuId'] == $menu['id']) { ?>
+                <li class="active"><?=$lang['nativeName']?></li>
             <?php } else { ?>
-                <li><a href="<?=$l['isoCode']?>"><?=$l['nativeName']?></a></li>
+                <li><a href="<?=$lang['menuId']?>"><?=$lang['nativeName']?></a></li>
             <?php } ?>
             </ul>
         <?php } ?>
 
         <div class="card-header-big">
-            <h1>{{menu.label}}</h1>
+            <h1>{{menu.name}}</h1>
             <ul class="breadcrumbs">
                 <?php foreach ($breadcrumbs as $b) { ?>
                 <li><a href="<?=$b['href']?>"><?=$b['label']?></a></li>
                 <?php } ?>
-                <li>{{menu.label}}</li>
+                <li>{{menu.name}}</li>
             </ul>
         </div>
 
         <div class="card-section toolbar">
+            <div class="toolbar-section">
+                <div class="section-content">
+                    <button class="btn btn-default" v-on:click="openItemCreateModal">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/insert-in-list.svg'?>" alt="icon">
+                        <span class="btn-label"><?=t('Add')?></span>
+                    </button>
+                    <button class="btn btn-default" :disabled="selection.length != 1" v-on:click="openItemEditModal">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/pencil.svg'?>" alt="icon">
+                        <span class="btn-label"><?=t('Edit')?></span>
+                    </button>
+                    <button class="btn btn-default" :disabled="selection.length == 0" v-on:click="remove">
+                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/delete-from-list.svg'?>" alt="icon">
+                        <span class="btn-label"><?=t('Delete')?></span>
+                    </button>
+                    <button class="btn btn-default" onclick="Mov.showDropdown({duration:150, target:'#addition-menu', source:this})">
+                        <i class="btn-icon text-primary fa fa-ellipsis-v"></i>
+                        <span class="btn-label"><?=t('Options')?> <i class="fa fa-caret-down"></i></span>
+                    </button>
+                </div>
+                <div class="section-title">
+                    <?=t('Items of menu')?>
+                </div>
+            </div>
             <div class="toolbar-section">
                 <div class="section-content">
                     <div class="p-0-5">
@@ -38,8 +61,8 @@
                         <span v-else><?=t('System name')?></span>
                     </div>
                     <div class="p-0-5">
-                        <input type="text" class="form-control" v-model="menu.label">
-                        <span v-if="errors.label != ''" class="text-danger">{{errors.label}}</span>
+                        <input type="text" class="form-control" v-model="menu.name">
+                        <span v-if="errors.name != ''" class="text-danger">{{errors.name}}</span>
                         <span v-else><?=t('Title')?></span>
                     </div>
                     <button
@@ -72,29 +95,6 @@
                     </div>
                 </div>
             <?php } ?>
-            <div class="toolbar-section">
-                <div class="section-content">
-                    <button class="btn btn-default" v-on:click="openItemCreateModal">
-                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/insert-in-list.svg'?>" alt="icon">
-                        <span class="btn-label"><?=t('Add')?></span>
-                    </button>
-                    <button class="btn btn-default" :disabled="selection.length != 1" v-on:click="openItemEditModal">
-                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/pencil.svg'?>" alt="icon">
-                        <span class="btn-label"><?=t('Edit')?></span>
-                    </button>
-                    <button class="btn btn-default" :disabled="selection.length == 0" v-on:click="remove">
-                        <img class="btn-icon" src="<?=core()->themeUrl.'/page/images/delete-from-list.svg'?>" alt="icon">
-                        <span class="btn-label"><?=t('Delete')?></span>
-                    </button>
-                    <button class="btn btn-default" onclick="Mov.showDropdown({duration:150, target:'#addition-menu', source:this})">
-                        <i class="btn-icon text-primary fa fa-ellipsis-v"></i>
-                        <span class="btn-label"><?=t('Options')?> <i class="fa fa-caret-down"></i></span>
-                    </button>
-                </div>
-                <div class="section-title">
-                    <?=t('Items of menu')?>
-                </div>
-            </div>
         </div>
 
         <ul class="dropdown hidden" id="addition-menu">
@@ -265,9 +265,9 @@
                         <label><?=t('Language')?> <span class="text-danger">*</span></label>
                     </div>
                     <div class="cell xs-8">
-                        <select class="form-control" v-model="translation.lang">
-                        <?php foreach ($languages as $l) if (!$l['isTranslated']) { ?>
-                            <option value="<?=$l['isoCode']?>">
+                        <select class="form-control" v-model="translation.langId">
+                        <?php foreach ($languages as $l) if (!$l['menuId']) { ?>
+                            <option value="<?=$l['id']?>">
                                 <?="$l[nativeName] / $l[internationalName] ($l[isoCode])"?>
                             </option>
                         <?php } ?>
@@ -283,9 +283,9 @@
                         <label><?=t('Duplicate from')?> <span class="text-danger">*</span></label>
                     </div>
                     <div class="cell xs-8" v-show="translation.duplicate">
-                        <select class="form-control" v-model="translation.duplicateFromLang">
-                        <?php foreach ($languages as $l) if ($l['isTranslated']) { ?>
-                            <option value="<?=$l['isoCode']?>">
+                        <select class="form-control" v-model="translation.duplicateFromLangId">
+                        <?php foreach ($languages as $l) if ($l['menuId']) { ?>
+                            <option value="<?=$l['id']?>">
                                 <?="$l[nativeName] / $l[internationalName] ($l[isoCode])"?>
                             </option>
                         <?php } ?>

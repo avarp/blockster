@@ -27,15 +27,15 @@
                     <?php foreach ($menus as $menu) { ?>
                         <tr>
                             <td><?=$menu['sysname']?></td>
-                            <td><?=$menu['label']?></td>
+                            <td><?=$menu['name']?></td>
                             <td class="nowrap">
                                 <form method="POST">
-                                    <?php foreach ($menu['langs'] as $l) { ?>
+                                    <?php foreach ($menu['langs'] as $n => $lang) { ?>
                                         <a
-                                            href="<?=core()->getUrl("route:admin > menu/$menu[sysname]/$l")?>"
+                                            href="<?=core()->getUrl("route:admin > menu/".$menu['ids'][$n])?>"
                                             class="btn btn-default <?=count($menu['langs']) > 1 ? '' : 'btn-square'?> btn-sm"
                                         >
-                                            <i class="fa fa fa-pencil"></i><?=count($menu['langs']) > 1 ? ' '.$l : ''?>
+                                            <i class="fa fa fa-pencil"></i><?=count($menu['langs']) > 1 ? ' '.$lang : ''?>
                                         </a>
                                     <?php } ?>
                                     <button

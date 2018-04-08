@@ -127,12 +127,7 @@ setSelectedField(menuFromPhp, false);
 setExpandedField(menuFromPhp, true);
 
 var basicUrl = window.location.href.split('/');
-if (lastOfArray(basicUrl) == 'new') {
-    basicUrl.pop();
-} else {
-    basicUrl.pop();
-    basicUrl.pop();
-}
+basicUrl.pop();
 basicUrl = basicUrl.join('/');
 
 const
@@ -280,7 +275,7 @@ var app = new Vue({
                 }
                 if (output.response > 0) {
                     localStorage.setItem('menuEditorInfoAfterReloading', 'savedSuccessfully')
-                    window.location.href = basicUrl+'/'+this.menu.sysname+'/'+this.menu.lang
+                    window.location.href = basicUrl+'/'+output.response
                 } else {
                     xhr.onerror()
                 }
@@ -310,11 +305,11 @@ var app = new Vue({
                     xhr.onerror()
                     return
                 }
-                if (output.response != '') {
-                    localStorage.setItem('menuEditorInfoAfterReloading', 'deletedSuccessfully')
-                    window.location.href = output.response
+                localStorage.setItem('menuEditorInfoAfterReloading', 'deletedSuccessfully')
+                if (output.response > 0) {
+                    window.location.href = basicUrl+'/'+output.response
                 } else {
-                    xhr.onerror()
+                    window.location.href = basicUrl
                 }
             }.bind(this)
             xhr.send('menuId='+this.menu.id)
@@ -341,19 +336,19 @@ var app = new Vue({
                     xhr.onerror()
                     return
                 }
-                if (output.response == true) {
+                if (output.response > 0) {
                     localStorage.setItem('menuEditorInfoAfterReloading', 'translationCreatedSuccessfully')
                     if (translation.open) {
-                        window.location.href = basicUrl+'/'+this.menu.sysname+'/'+translation.lang
+                        window.location.href = basicUrl+'/'+output.response
                     } else {
-                        window.location.href = basicUrl+'/'+this.menu.sysname+'/'+this.menu.lang
+                        window.location.href = window.location.href
                     }
                 } else {
                     xhr.onerror()
                 }
             }.bind(this)
-            var postData = 'sysname='+this.menu.sysname+'&lang='+translation.lang;
-            if (translation.duplicate) postData += '&duplicateFromLang='+translation.duplicateFromLang;
+            var postData = 'sysname='+this.menu.sysname+'&langId='+translation.langId;
+            if (translation.duplicate) postData += '&duplicateFromLangId='+translation.duplicateFromLangId;
             xhr.send(postData)
         } 
     },
@@ -371,7 +366,7 @@ var app = new Vue({
             var e = {
                 length:0,
                 sysname:'',
-                label:''
+                name:''
             }
             if (this.menu.sysname == '') {
                 e.sysname = t('Fill system name.')
@@ -383,8 +378,8 @@ var app = new Vue({
                 e.sysname = t('This name is already in use.')
                 e.length++
             }
-            if (this.menu.label == '') {
-                e.label = t('Fill title.')
+            if (this.menu.name == '') {
+                e.label = t('Fill name.')
                 e.length++
             }
             return e
@@ -416,7 +411,7 @@ var app = new Vue({
                 }
                 this.isSysnameUnique = output.response
             }.bind(this)
-            var postData = 'sysname='+this.menu.sysname+'&lang='+this.menu.lang;
+            var postData = 'sysname='+this.menu.sysname+'&langId='+this.menu.langId;
             xhr.send(postData)
         }, 500)
     },
@@ -440,10 +435,10 @@ var app = new Vue({
                     showErrors:false,
                     showInfo:true,
                     translation:{
-                        lang:'',
+                        langId:0,
                         open:false,
                         duplicate:false,
-                        duplicateFromLang:''
+                        duplicateFromLangId:0
                     }
                 }
                 if (localStorage.getItem('translationModalHideInfo')) {
@@ -465,10 +460,10 @@ var app = new Vue({
                 },
                 close:function() {
                     Mov.hideModal({target:this.$el}).then(function() {
-                        this.translation.lang = ''
+                        this.translation.langId = 0
                         this.translation.open = false
                         this.translation.duplicate = false
-                        this.translation.duplicateFromLang = ''
+                        this.translation.duplicateFromLangId = 0
                     }.bind(this));
                 },
                 hideInfo() {
@@ -479,8 +474,8 @@ var app = new Vue({
             computed:{
                 errors:function() {
                     var e = []
-                    if (this.translation.lang == '') e.push(t('Select language of new translation'))
-                    if (this.translation.duplicate == true && this.translation.duplicateFromLang == '') {
+                    if (this.translation.langId == 0) e.push(t('Select language of new translation'))
+                    if (this.translation.duplicate == true && this.translation.duplicateFromLangId == 0) {
                         e.push(t('Select language you want to copy from.'))
                     }
                     return e
@@ -597,7 +592,7 @@ var app = new Vue({
                         this.list.splice(i0, 1)
                         this.list.splice(i1, 0, b)
                     }
-                    // dirty-hack (because Chrome leave :hover state even element is moved away from cursor) 
+                    // <dirty-hack> (because Chrome leave :hover state even element is moved away from cursor) 
                     if (!isTouchEvent && i1 != i0) {
                         var items = this.$el.children
                         items[i0].firstElementChild.style.background = 'transparent'
@@ -609,7 +604,7 @@ var app = new Vue({
                         }
                         document.body.addEventListener('mousemove', f)
                     }
-                    // end-hack
+                    // </dirty-hack>
                 }
             }
         }

@@ -33,37 +33,34 @@ class Controller extends \modules\Controller
     {
         $languages = $this->model->getLangList($menu['sysname']);
         $transCnt = 0;
-        foreach ($languages as $l) if ($l['isTranslated']) $transCnt++;
+        foreach ($languages as $l) if ($l['menuId']) $transCnt++;
         $breadcrumbs = $this->breadcrumbs;
 
         $this->view->data = compact('breadcrumbs', 'menuId', 'menu', 'languages', 'transCnt');
         $this->view->template = 'menu-editor.php';
-        $this->view->setTitle($menu['label']);
+        $this->view->setTitle($menu['name']);
         return $this->view->render();
     }
 
     public function action_default($params)
     {
         restrictAccessLevel(100);
-        switch (count($params)) {
-            case 1:
+        if ($params['id'] === '') {
             return $this->showMenus();
-
-            case 2:
-            if ($params[1] == 'new') {
-                $menu = $this->model->createMenu();
-                return $this->showMenueditor($menu);
-            }
-            break;
-
-            case 3:
-            $menu = $this->model->getMenuBySysname($params[1], $params[2]);
+        } else {
+            $menu = $this->model->getMenuById((int)$params['id']);
             if (!empty($menu)) {
                 return $this->showMenueditor($menu);
             }
-            break;
         }
         error404();
+    }
+
+    public function action_new()
+    {
+        restrictAccessLevel(100);
+        $menu = $this->model->createMenu();
+        return $this->showMenueditor($menu);
     }
     
     public function action_saveMenu($params) {
@@ -73,32 +70,31 @@ class Controller extends \modules\Controller
 
     public function action_deleteMenu($params) {
         if (!isset($params['menuId'])) return '';
-        $menu = $this->model->getMenuInfoById($params['menuId']);
-        if (!$menu) return '';
+        $menu = $this->model->getMenuById($params['menuId']);
+        if (!$menu) return 0;
         $this->model->deleteMenuById($params['menuId']);
-        $nextMenu = $this->model->getMenuInfoBySysname($menu['sysname']);
-        if (!$nextMenu) return '';
-        $urlToNextMenu = core()->getUrl('route:admin>menu/'.$nextMenu['sysname'].'/'.$nextMenu['lang']);
-        return $urlToNextMenu;
+        $nextMenu = $this->model->getMenuBySysname($menu['sysname']);
+        if (!$nextMenu) return 0;
+        return $nextMenu['id'];
     }
 
     public function action_createTranslation($params) {
         extract($params);
-        if (!isset($sysname) || !isset($lang)) return false;
-        if (isset($duplicateFromLang)) {
-            $menu = $this->model->getMenuBySysname($sysname, $duplicateFromLang);
-            $id = $this->model->saveMenuAs($menu, $sysname, $lang);
+        if (!isset($sysname) || !isset($langId)) return 0;
+        if (isset($duplicateFromLangId)) {
+            $menu = $this->model->getMenuBySysname($sysname, $duplicateFromLangId);
+            $id = $this->model->saveMenuAs($menu, $sysname, $langId);
         } else {
-            $newMenu = $this->model->createMenu($sysname, $lang);
+            $newMenu = $this->model->createMenu($sysname, $langId);
             $id = $this->model->saveMenu($newMenu);
         }
-        return $id != 0;
+        return $id;
     }
 
     public function action_isSysnameUnique($params) {
         extract($params);
-        if (!isset($sysname) || !isset($lang)) return false;
-        $menuInfo = $this->model->getMenuInfoBySysname($sysname, $lang);
-        return empty($menuInfo);
+        if (!isset($sysname) || !isset($langId)) return false;
+        $menu = $this->model->getMenuBySysname($sysname, $langId);
+        return empty($menu);
     }
 }
