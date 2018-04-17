@@ -1,21 +1,98 @@
 <?php
 namespace core;
+/**
+* Definition main class of cms.
+* @author Artem Vorobev <artem.v.mailbox@gmail.com>
+*/
 
 class SystemException extends \Exception{}
 
+/**
+ * Main class. Uses singletone pattern. It's responsible for:
+ * - creation response
+ * - loading modules and positions
+ * - providing access to event bus, database and localization systems
+ * @uses \core\Translator
+ * @uses \core\EventBus
+ * @uses \core\routing\RoutingCompiler
+ * @uses \core\routing\Router
+ * @uses \core\database\Dbh
+ */
 class System
 {
+    /**
+     * Singletone instance of system.
+     * @static
+     */
     private static $instance;
-    private $router;
-    private $routeName;
+
+
+    /**
+     * Routers used to define content to show. They are examples of \core\routing\Router class.
+     * They works separately, but uses same HTTP query to find what to show.
+     * content - finds first module (root module) and optionally positions, theme and language.
+     * theme - find theme if it's not defined yet
+     * lang - find language if it's not defined yet
+     */
+    private $routers = array(
+        'content' => null,
+        'theme' => null,
+        'lang' => null
+    );
+
+
+    /**
+     * Example of \core\Translator. It uses .mo files and GetText system for translating UI
+     */
     private $translator;
+
+
+    /**
+     * Example of \core\EventBus. This is universal event bus.
+     * It's private, but System provides read-only access to it.
+     */
     private $eventBus;
+
+
+    /**
+     * Example of \core\database\Dbh. Database handler.
+     * It's private, but System provides read-only access to it.
+     */
     private $dbh;
-    private $positions = array();
-    private $theme;
-    private $themeUrl;
-    private $lang;
+
+
+    /**
+     * Array describes content to show:
+     * - first module (root module)
+     * - positions (modules grouped by named positions)
+     * - language
+     * - theme
+     * System provides read-only access to language and theme.
+     */
+    private $content = array();
+
+
+    /**
+     * Stack of nested modules. If imagine page as tree of nested modules, this 
+     * stack is one branch contains modules executing now.
+     * Each element of this stack contains:
+     * - name - name of module without action
+     * - action - name of called action
+     * - controller - instance of module's controller
+     * - cache - name of file, which contains cache for this action 
+     */
     private $moduleStack = array();
+
+
+    /**
+     * Log of broadcasted messages. It used for creating cache. While system executes
+     * modules, they can call function broadcastMessage() and all this messages will be
+     * broadcasted immediately. But if you get output of module from cache, no code is
+     * executed. That's why all messages is logging and if system creates cache,
+     * they will be flushed into cache file. Each message have 2 fields:
+     * - message - name of message
+     * - params - any parameters required for doing something when accept this message
+     */
     private $msgLog = array();
 
 
@@ -23,14 +100,37 @@ class System
     private function __wakeup() {}
 
 
+    /**
+     * Open some properties for reading by modules.
+     * - dbh - database handler
+     * - eventBus - event bus
+     * - theme - selected theme
+     * - themeUrl - url of selected theme
+     * - lang - selected language
+     * @param string $name name of property
+     * @return mixed property 
+     */
     public function __get($name)
     {
-        if (in_array($name, ['dbh', 'eventBus', 'theme', 'themeUrl', 'lang'])) {
+        if (in_array($name, ['dbh', 'eventBus'])) {
             return $this->$name;
+        } else switch ($name) {
+            case 'theme':
+            return $this->content['theme'];
+
+            case 'themeUrl':
+            return SITE_URL.'/themes/'.$this->content['theme'];
+
+            case 'lang':
+            return $this->content['lang'];
         }
     }
 
 
+    /**
+     * Get singletone instance of System
+     * @return object instance of \core\System
+     */
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -40,6 +140,9 @@ class System
     }
 
 
+    /**
+     * Init the System
+     */
     private function __construct()
     {
         $uri = $_SERVER['REQUEST_URI'];
@@ -53,18 +156,21 @@ class System
             define('SITE_URL', $siteUrl);
         }
 
-        $compiler = new routing\RoutingCompiler;
-        $routes = $compiler->compile('routing.json');
-        file_put_contents('core/routing/compiled.json', jsonFmt(json_encode($routes)));
+        $this->translator = new locale\Translator;
+        $this->eventBus = new events\EventBus;
 
-        $this->router = new routing\Router($routes);
-        $this->translator = new Translator;
-        $this->eventBus = new EventBus;
+        $compiler = new routing\RoutingCompiler;
+        $this->routers['content'] = new routing\Router($compiler->compile('core/routing/content.json'));
+        $this->routers['theme'] = new routing\Router($compiler->compile('core/routing/theme.json'));
+        $this->routers['lang'] = new routing\Router($compiler->compile('core/routing/lang.json'));
     }
 
 
-
-
+    /**
+     * Trim GET-parameters and anchor
+     * @param string $u URI to trim
+     * @return string trimmed URI
+     */
     private function trimGetParams($u)
     {
         if (false !== $p = strpos($u, '?')) $u = substr($u, 0, $p);
@@ -73,39 +179,110 @@ class System
     }
 
 
-
-
+    /**
+     * Reset system. Check recursion level, stop output buffering and clear module stack
+     * and message log. 
+     * @staticvar integer $recursionCounter counts depth of recursion
+     * @return void
+     */
     private function resetSystem()
     {
         static $recursionCounter = 0;
         $recursionCounter++;
         if ($recursionCounter > 1 && ob_get_level() > 0) {
-            ob_end_clean();
+            for ($i=ob_get_level(); $i>0; $i--) ob_end_clean();
             $this->moduleStack = array();
             $this->msgLog = array();
-            $this->positions = array();
         } elseif ($recursionCounter > 10) {
-            throw new SystemException('Error in function exitResponse. Recursion is too deep.');
+            throw new SystemException('Error while creating Response. Recursion is too deep.');
         }
     }
 
 
+    /**
+     * Fetch user's language from HTTP header Accept-language.
+     * @return string ISO code of language 
+     */
+    private function getAcceptLanguage()
+    {
+        preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)(?:;q=([0-9.]+))?/i', $_SERVER["HTTP_ACCEPT_LANGUAGE"], $matches);
+        $langs = array_combine($matches[1], $matches[2]);
+        foreach ($langs as $n => $v) $langs[$n] = $v ? $v : 1;
+        arsort($langs);
+        return key($langs);
+    }
 
 
+    /**
+     * Execute routing by HTTP query. Get information about:
+     * - what module is to be executed first (required)
+     * - which positions defined for this content (required)
+     * - what is selected language (optional)
+     * - what theme is to be used for displaying content (optional)
+     * @param array $httpQuery - URI, HTTP-method and HTTP-status
+     * @return array description of content to be shown
+     */
+    private function findContent($httpQuery)
+    {
+        $content = $this->routers['content']->find($httpQuery);
+        if (empty($content)) {
+            $httpQuery['status'] = 404;
+            $content = $this->routers['content']->find($httpQuery);
+        }
+        if (empty($content)) {
+            throw new SystemException('Routing error. Nothing to show. Please check file core/routing/content.json.');
+        }
+        if (!isset($content['positions'])) $content['positions'] = array();
+        return $content;
+    }
+
+
+    /**
+     * Execute routing by HTTP query. Find which language system should use.
+     * @param array $httpQuery - URI, HTTP-method and HTTP-status
+     * @return array all info about language
+     */
+    private function detectLanguage($httpQuery)
+    {
+        $l = $this->routers['lang']->find($httpQuery);
+        if (empty($l)) $l = $this->getAcceptLanguage();
+        
+        if (!is_null($this->dbh)) {
+            $lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
+            if (!$lang) $lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));
+            if (!$lang) $lang = $this->dbh->row("SELECT * FROM languages WHERE isoCode='en'");
+        } else {
+            $rtl = ['ar', 'arq', 'arz', 'ajp', 'apc', 'ary', 'aeb', 'aii', 'azj-arab',
+            'prs', 'he', 'kk-arab', 'ckb-arab', 'ps', 'fa', 'pnb', 'sd', 'ug-arab', 'ur'];
+            $lang = [
+                'id' => 0,
+                'isoCode' => $l,
+                'internationalName' => '',
+                'nativeName' => '',
+                'direction' => in_array($l, $rtl) ? 'rtl' : 'ltr',
+                'isActive' => 0
+            ];
+        }
+        return $lang;
+    }
+
+
+    /**
+     * Postprocess response before sending. Set HTTP-status and Content-type
+     * headers. Add information about system performance.
+     * @param array $httpQuery - URI, HTTP-method and HTTP-status
+     * @param mixed $response - generated response
+     * @return string $response - response is to be sent
+     */
     private function postprocessResponse($httpQuery, $response)
     {
-        $httpStatusCodes = array(
-            404 => 'Not Found',
-            403 => 'Forbidden'
-        );
-        if (isset($httpStatusCodes[$httpQuery['status']])) {
-            $sapiName = php_sapi_name();
-            $s = $httpQuery['status'].' '.$httpStatusCodes[$httpQuery['status']];
-            if ($sapiName == 'cgi' || $sapiName == 'cgi-fcgi') {
-                header('Status: '.$s);
-            } else {
-                header($_SERVER['SERVER_PROTOCOL'].' '.$s);
-            }
+        $httpStatusCodes = getHttpStatusCodes();
+        $sapiName = php_sapi_name();
+        $s = $httpQuery['status'].' '.$httpStatusCodes[$httpQuery['status']];
+        if ($sapiName == 'cgi' || $sapiName == 'cgi-fcgi') {
+            header('Status: '.$s);
+        } else {
+            header($_SERVER['SERVER_PROTOCOL'].' '.$s);
         }
 
         $t = round(1000*(microtime(true) - CMS_START), 3);
@@ -129,69 +306,56 @@ class System
     }
 
 
-
-
-    private function getAcceptLanguage()
-    {
-        preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)(?:;q=([0-9.]+))?/i', $_SERVER["HTTP_ACCEPT_LANGUAGE"], $matches);
-        $langs = array_combine($matches[1], $matches[2]);
-        foreach ($langs as $n => $v) $langs[$n] = $v ? $v : 1;
-        arsort($langs);
-        return key($langs);
-    }
-
-
-
-
-    public function exitResponse($httpQuery=array())
+    /**
+     * Create and send response. This is main function of this class.
+     * IMPORTANT! This function will call exit() at the end.
+     * @param array $httpQuery URI, HTTP-method and HTTP-status
+     * @return void
+     */
+    public function getResponse($httpQuery=array())
     {
         $this->resetSystem();
-        $this->eventBus->dispatchEvent('onSystemStart');
 
         // fill defaults
         if (!isset($httpQuery['uri'])) $httpQuery['uri'] = SITE_URL.$this->trimGetParams($_SERVER['REQUEST_URI']);
         if (!isset($httpQuery['method'])) $httpQuery['method'] = $_SERVER['REQUEST_METHOD'];
         if (!isset($httpQuery['status'])) $httpQuery['status'] = 200;
 
-        $route = $this->router->findRoute($httpQuery);
-
-        if (empty($route) && $httpQuery['status'] == 404) {
-            throw new SystemException('Error in function exitResponse. Nothing to show. Please check routing map.');
+        // connect to database if not connected yet
+        if (is_null($this->dbh)) {
+            try {
+                $this->dbh = new database\Dbh;
+            } catch (\Exception $e) {
+                $httpQuery['method'] = 'INSTALL_SYSTEM';
+            }
         }
-        if (empty($route)) $this->exitResponse(array('status' => 404));
 
-        $route = $this->eventBus->dispatchEventFilter('onRouting', $route);
-        $this->routeName = $route['name'];
-        $content = $route['content'];
-        
-        // check fatal errors in content
+        $this->eventBus->dispatchEvent('onSystemStart');
+
+        // find content to show
+        $content = $this->findContent($httpQuery);
+
+        if (!isset($content['lang']) || empty($content['lang'])) {
+            $content['lang'] = $this->detectLanguage($httpQuery);
+        }
+        if (!isset($content['theme']) || empty($content['theme'])) {
+            $content['theme'] = $this->routers['theme']->find($httpQuery);
+        }
+        $content = $this->eventBus->dispatchEventFilter('onRouting', $content);
+
+        // check content
         if (!isset($content['module'])) {
-            throw new SystemException('Error in function exitResponse. Root module is not specified.');
+            throw new SystemException('Wrong content format. Root module is not specified.');
         }
         if (!$this->isModuleExists($content['module']['name'])) {
-            throw new SystemException('Error in function exitResponse. Root module is not exists.');
-        }
-        if (!isset($content['theme'])) {
-            throw new SystemException('Error in function exitResponse. Theme directory is not specified.');
+            throw new SystemException('Wrong content format. Root module is not exists.');
         }
         if (!is_dir(ROOT_DIR.DS.'themes'.DS.$content['theme'])) {
-            throw new SystemException("Error in function exitResponse. Theme directory \"$content[theme]\" is not exists.");
+            throw new SystemException("Wrong content format. Theme directory \"$content[theme]\" is not exists.");
         }
 
-        $this->theme = $content['theme'];
-        $this->themeUrl = SITE_URL.'/themes/'.$this->theme;        
-        $this->dbh = new Sqlite('data'.DS.'default.db');
-        
-        // detect language
-        $l = isset($content['lang']) ? $content['lang'] : $this->getAcceptLanguage();
-        $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', array($l));
-        if (!$this->lang) $this->lang = $this->dbh->row('SELECT * FROM languages WHERE isoCode=?', explode('-', $l));
-        if (!$this->lang) $this->lang = $this->dbh->row("SELECT * FROM languages WHERE isoCode='en'");
-
-        if (isset($content['events'])) $this->eventBus->importEventHandlers($route['events']);
-        if (isset($content['positions'])) $this->positions = $content['positions'];
-
-        // call root module
+        // show content
+        $this->content = $content;
         $this->eventBus->dispatchEvent('onRoutingDone');
         $response = $this->loadModule($content['module']['name'], $content['module']['params']);
         $response = $this->eventBus->dispatchEventFilter('onExit', $response);
@@ -200,20 +364,22 @@ class System
     }
 
 
-
-
-
-
+    /**
+     * Reverse routing.
+     * @param string $destination string with special format
+     * @return string url
+     */
     public function getUrl($destination)
     {
-        return $this->router->getUrl($destination);
+        return $this->routers['content']->getUrl($destination);
     }
 
 
-
-
-
-
+    /**
+     * Check if specified module exists.
+     * @param string $name name (and optionally action) of module
+     * @return boolean true if exists
+     */
     public function isModuleExists($name) {
         $a = explode('::', $name);
         $action = isset($a[1])? 'action_'.$a[1] : 'action_default';
@@ -223,9 +389,13 @@ class System
     }
 
 
-
-
-
+    /**
+     * Load module, execute action and get the output.
+     * @staticvar integer $recursionCounter counts depth of recursion
+     * @param string $name name (and optionally action) of module
+     * @param array $params any params required by module
+     * @return mixed output of module
+     */
     public function loadModule($name, $params)
     {
         static $recursionCounter = 0;
@@ -237,7 +407,7 @@ class System
         $a = explode('::', $name);
 
         $cacheDir        = ROOT_DIR.DS.'temp'.DS.'cache'.DS.$a[0];
-        $tplDir          = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$a[0];
+        $tplDir          = ROOT_DIR.DS.'themes'.DS.$this->content['theme'].DS.$a[0];
         $moduleName      = $a[0];
         $action          = isset($a[1])? 'action_'.$a[1] : 'action_default';
         $namespace       = str_replace('/', '\\', DS.'modules'.DS.$a[0]);
@@ -245,10 +415,10 @@ class System
 
         //test on fatal errors
         if (!class_exists($controllerClass)) {
-            throw new SystemException('Error in function loadModule. The Controller class of module "'.$name.'" is not defined');
+            throw new SystemException('The Controller class of module "'.$name.'" is not defined');
         }
         if (!method_exists($controllerClass, $action)) {
-            throw new SystemException('Error in function loadModule. The '.$action.' method is not defined in Controller class of module "'.$name.'"');
+            throw new SystemException('The '.$action.' method is not defined in Controller class of module "'.$name.'"');
         }
 
         //put the module into stack
@@ -309,12 +479,16 @@ class System
     }
 
 
-
-
+    /**
+     * Load modules in specified position as defined in content.
+     * IMPORTANT! All modules should returns string as its output.
+     * @param string $posName name of position
+     * @return string outputs of module
+     */
     public function loadPosition($posName)
     {
-        if (isset($this->positions[$posName])) {
-            $modules = $this->positions[$posName];
+        if (isset($this->content['positions'][$posName])) {
+            $modules = $this->content['positions'][$posName];
             $output = '';
             foreach ($modules as $module) {
                 $output .= $this->loadModule(
@@ -327,9 +501,12 @@ class System
     }
 
 
-
-
-
+    /**
+     * Offer to system to use cache instead of executing code of module.
+     * @param string $file name of file used to get cache
+     * @param integer $lifetime amount of seconds from creation cache file while it is valid
+     * @return boolean is system will use cache or not
+     */
     public function useCache($file, $lifetime=3600)
     {
         if (empty($file) || $lifetime < 60) return false;
@@ -347,8 +524,11 @@ class System
     }
 
 
-
-
+    /**
+     * Broadcast message to all modules in modules stack.
+     * @param string $message name of message
+     * @param array $params any parameters required for doing something when accept this message
+     */
     public function broadcastMessage($message, $param='')
     {
         $this->msgLog[] = compact('message', 'param');
@@ -359,25 +539,39 @@ class System
     }
 
 
-
-
-
+    /**
+     * Get .mo file for this module. This files is used by GetText system for
+     * translating text messages. Path to file depends on module on the top of
+     * the modules stack, language and theme.
+     * @return string full path to .mo file
+     */
     private function getThisMoFile() {
         if (empty($this->moduleStack)) {
             throw new SystemException('Translation possible only in context of module.');
         }
-        $localeDir = ROOT_DIR.DS.'themes'.DS.$this->theme.DS.$this->moduleStack[count($this->moduleStack)-1]['name'].DS.'locale';
-        $moFile = $localeDir.DS.$this->lang['isoCode'].'.mo';
+        $localeDir = 
+            ROOT_DIR.
+            DS.'themes'.
+            DS.$this->content['theme'].
+            DS.$this->moduleStack[count($this->moduleStack)-1]['name'].
+            DS.'locale';
+        $moFile = $localeDir.DS.$this->content['lang']['isoCode'].'.mo';
         if (!file_exists($moFile)) {
-            $l = explode('-', $this->lang['isoCode']);
+            $l = explode('-', $this->content['lang']['isoCode']);
             $moFile = $localeDir.DS.$l[0].'.mo';
         }
         return $moFile;
     }
 
 
-
-
+    /**
+     * Provide single interface for Translator.
+     * IMPORTANT! You shouldn't use this function itself. Use global function t()
+     * for localization.
+     * @param string $msg1 message (in singular form, if $msg2 is used)
+     * @param string $msg2 (if $n is used it specify plural form, otherwise it specify context of message $msg1)
+     * @param integer $n number used for translate plural forms
+     */
     public function translate($msg1, $msg2=null, $n=null)
     {
         $moFile = $this->getThisMoFile();
@@ -391,8 +585,11 @@ class System
     }
 
 
-
-
+    /**
+     * Add js file with Translator function and return javascript expression
+     * which binds this function with content of .mo file
+     * @return string js expression
+     */
     public function getTranslatorForJs() {
         $moFile = $this->getThisMoFile();
         return $this->translator->getTranslatorForJs($moFile);

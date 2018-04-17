@@ -13,6 +13,6 @@
 <?=$this->head()?>
 </head>
 <body>
-    <?=module('admin/authorization')?>
+    <?=position('content')?>
 </body>
 </html>

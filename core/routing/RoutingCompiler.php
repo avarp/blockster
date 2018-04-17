@@ -7,7 +7,7 @@ class RoutingCompiler
 {
     protected function divideUriSelector($u)
     {
-        if (substr($u, 0, 4) == '//') {
+        if (substr($u, 0, 2) == '//') {
             $p = strpos($u, '/', 2);
             $host = 'https?:'.substr($u, 0, $p);
             $path = substr($u, $p);
@@ -104,7 +104,6 @@ class RoutingCompiler
                     $map[$routeName]['selector']['names'] = array();
                 }
             }
-            $map[$routeName]['name'] = $routeName;
         }
 
         return $map;

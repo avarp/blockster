@@ -7,8 +7,8 @@ class Controller extends \modules\Controller
     public function __construct($view, $model) {
         parent::__construct($view, $model);
         $this->breadcrumbs = array(
-            array('label' => t('Dashboard'), 'href' => core()->getUrl('route:admin')),
-            array('label' => t('List of menus'), 'href' => core()->getUrl('route:admin>menu'))
+            array('label' => t('Dashboard'), 'href' => core()->getUrl('/route:admin/dashboard')),
+            array('label' => t('List of menus'), 'href' => core()->getUrl('/route:admin/menu'))
         );
     }
 

@@ -1,10 +1,24 @@
 {
+    "install":{
+        "selector":{
+            "method":["INSTALL_SYSTEM"]
+        },
+        "response":{
+            "module":{
+                "name":"page",
+                "params":{"template":"empty.php"}
+            },
+            "positions":{
+                "content":[{"name":"admin/backup::installSystem", "params":{}}]
+            },
+            "theme":"admin"
+        }
+    },
     "error404":{
         "selector":{
             "status":404
         },
-        "content":{
-            "theme":"default",
+        "response":{
             "module":{
                 "name":"page",
                 "params":{"template":"404.php"}
@@ -15,11 +29,13 @@
         "selector":{
             "status":403
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"page",
-                "params":{"template":"auth.php"}
+                "params":{"template":"empty.php"}
+            },
+            "positions":{
+                "content":[{"name":"admin/authorization", "params":{}}]
             }
         }
     },
@@ -30,11 +46,24 @@
                 "moduleName":{"type":"any"}
             }
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"ajax",
                 "params":{"moduleName":"{moduleName}"}
+            }
+        }
+    },
+    "reverseRouting":{
+        "selector":{
+            "uri":"/route:{routeName}",
+            "params":{
+                "routeName":{"type":"any"}
+            }
+        },
+        "response":{
+            "module":{
+                "name":"helpers/reverseRouting",
+                "params":{}
             }
         }
     },
@@ -42,8 +71,7 @@
         "selector":{
             "uri":"/adminer"
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"admin/adminer",
                 "params":{}
@@ -54,8 +82,7 @@
         "selector":{
             "uri":"/admin"
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"page",
                 "params":{"template":"default.php"}
@@ -73,8 +100,7 @@
                 "id":{"type":"numeric", "optional":true}
             }
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"page",
                 "params":{"template":"default.php"}
@@ -89,17 +115,30 @@
             "uri":"/admin/articles/{action}/{id}",
             "params":{
                 "action":{"type":"string", "optional":true, "default":"default"},
-                "id":{"type":"numeric"}
+                "id":{"type":"numeric", "optional":true}
             }
         },
-        "content":{
-            "theme":"admin",
+        "response":{
             "module":{
                 "name":"page",
                 "params":{"template":"default.php"}
             },
             "positions":{
-                "content":[{"name":"admin/menu::{action}", "params":{"id":"{id}", "parentId":"{id}"}}]
+                "content":[{"name":"admin/articles::{action}", "params":{"id":"{id}", "parentId":"{id}"}}]
+            }
+        }
+    },
+    "admin/backup":{
+        "selector":{
+            "uri":"/admin/backup"
+        },
+        "response":{
+            "module":{
+                "name":"page",
+                "params":{"template":"default.php"}
+            },
+            "positions":{
+                "content":[{"name":"admin/backup", "params":{}}]
             }
         }
     },
@@ -110,8 +149,7 @@
                 "uri":{"type":"any"}
             }
         },
-        "content":{
-            "theme":"default",
+        "response":{
             "module":{
                 "name":"page",
                 "params":{"template":"default.php"}

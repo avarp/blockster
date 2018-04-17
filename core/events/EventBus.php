@@ -1,11 +1,12 @@
 <?php
-namespace core;
+namespace core\events;
 
 class EventBus
 {
     protected $handlers = array();
 
-    public function importEventHandlers($handlers) {
+    public function importEventHandlers($handlers)
+    {
         foreach ($handlers as $event => $handlersList) {
             foreach ($handlersList as $handler) $this->addEventHandler($event, $handler);
         }

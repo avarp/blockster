@@ -1,12 +1,15 @@
 <?php
-namespace core;
+namespace core\database;
 
-class Sqlite extends \PDO
+class Dbh extends \PDO
 {
-    public function __construct($dbFile)
+    public function __construct()
     {
-        parent::__construct('sqlite:'.$dbFile);
+        $cfg = json_decode(file_get_contents(__DIR__.DS.'dbconn.json'), true);
+        if (is_null($cfg)) throw new \Exception('Invalid connection to database.');
+        parent::__construct("mysql:host=$cfg[host];dbname=$cfg[database]", $cfg['user'], $cfg['password']);
         parent::setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        parent::exec("SET NAMES UTF8");
     }
 
     public function table($sql, $array=array())
@@ -89,10 +92,5 @@ class Sqlite extends \PDO
             foreach ($array as $key => $value) if (strpos($sql, ':'.$key) === false) unset($array[$key]);
             return $array;
         }
-    }
-
-    public function escape($string)
-    {
-        return SQLite3::escapeString($string);
     }
 }

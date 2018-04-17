@@ -8,7 +8,7 @@
         </ul>
     </div>
     <div class="card-section">
-        <a href="<?=core()->getUrl('route:admin > menu/new')?>" class="btn btn-success">
+        <a href="<?=core()->getUrl('/route:admin/menu?action=new')?>" class="btn btn-success">
             <i class="fa fa-plus"></i> <?=t('Create menu')?>
         </a>
     </div>
@@ -32,7 +32,7 @@
                                 <form method="POST">
                                     <?php foreach ($menu['langs'] as $n => $lang) { ?>
                                         <a
-                                            href="<?=core()->getUrl("route:admin > menu/".$menu['ids'][$n])?>"
+                                            href="<?=core()->getUrl("/route:admin/menu?id=".$menu['ids'][$n])?>"
                                             class="btn btn-default <?=count($menu['langs']) > 1 ? '' : 'btn-square'?> btn-sm"
                                         >
                                             <i class="fa fa fa-pencil"></i><?=count($menu['langs']) > 1 ? ' '.$lang : ''?>

@@ -97,7 +97,7 @@ header .logo {
     padding: 0;
     margin: 0;
 }
-.menu > li > a {
+.menu > li > a, .menu > li > span {
     display: block;
     padding: 0.8em 1em;
     color: inherit;
@@ -108,26 +108,22 @@ header .logo {
     cursor: pointer;
     border-radius: 2px;
 }
-.menu > li > a > .fa {
+.menu .fa {
     display: inline-block;
     vertical-align: middle;
     width: 2rem;
     font-size: 1.5em;
     color: #0288D1;
 }
-.menu > li > a:hover {
+.menu > li > a:hover, .menu > li > span:hover {
     background-color: rgba(2, 136, 209, 0.1);
 }
-.menu > li > a > .submenu-mark {
-    display: inline-block;
+.menu .submenu-mark {
     float: right;
-    line-height: 1.5em;
-    height: 1.5em;
+    width: auto;
 }
 .menu .menu {
-    display: none;
-    border-top: 1px solid #07b;
-    border-bottom: 1px solid #07b;
+    margin-left: 2em;
 }
 
 

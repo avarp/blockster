@@ -5,7 +5,7 @@ function checkServer() {
     if (PHP_VERSION_ID <= 50500) throw new BootException('Blockster requires PHP version 5.5.0 or later');
 
     $installedExtensions = get_loaded_extensions();
-    $requiredExtensions = array('sqlite3', 'PDO', 'curl', 'pdo_sqlite', 'zip' ,'gd' ,'mbstring');
+    $requiredExtensions = array('PDO', 'curl', 'zip' ,'gd' ,'mbstring');
     $notInstalledExtensions = array_diff($requiredExtensions, $installedExtensions);
     if (!empty($notInstalledExtensions)) {
         throw new BootException('Not installed these required extensions of PHP: '.implode(', ', $notInstalledExtensions));

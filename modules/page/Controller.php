@@ -6,6 +6,7 @@ class Controller extends \modules\Controller
     public function action_default($params)
     {    
         $this->view->template = $params['template'];
+        core()->eventBus->dispatchEvent('onPageRender');
         return $this->view->render();
     }
 

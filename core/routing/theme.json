@@ -1,0 +1,20 @@
+[
+    {
+        "selector":{
+            "status":403
+        },
+        "response":"admin"
+    },
+    {
+        "selector":{
+            "uri":"/admin.*"
+        },
+        "response":"admin"
+    },
+    {
+        "selector":{
+            "uri":"/.*"
+        },
+        "response":"default"
+    }
+]

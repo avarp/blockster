@@ -2,17 +2,16 @@
 namespace modules\admin\authorization;
 const OFFLINE_DELAY = 900;
 
-core()->eventBus->addEventHandler('onSystemStart', function() {
+core()->eventBus->addEventHandler('onPageRender', function() {
     if (isset($_POST['logOut'])) {
         $model = new Model;
         $model->logOut();
-        header('Location: '.$_SERVER['REQUEST_URI']);
-        die();
+        rebuildPage();
     }
 });
 
-core()->eventBus->addEventHandler('onModuleLoad', function($module) {
-    if ($module['depth'] == 0 && isset($_SESSION['user'])) {
+core()->eventBus->addEventHandler('onPageRender', function() {
+    if (isset($_SESSION['user'])) {
         $model = new Model;
         $model->updateTrackingTimestamp();
         core()->broadcastMessage('addJsText',

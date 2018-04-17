@@ -42,11 +42,7 @@
             </button>
         </header>
         <nav class="cell lg-3 xl-2 hidden-md-down" id="adminMenu">
-            <ul class="menu">
-                <li><a href="<?=core()->getUrl('route:admin')?>"><i class="fa fa-cogs"></i>Панель управления</a></li>
-                <li><a href="<?=core()->getUrl('route:admin > menu')?>"><i class="fa fa-bars"></i>Меню</a></li>
-                <li><a href="<?=core()->getUrl('route:adminer')?>"><i class="fa fa-database"></i>Adminer</a></li>
-            </ul>
+            <?=module('menu', ['name' => 'admin-menu'])?>
         </nav>
         <main class="cell lg-9 xl-10" id="main">
             <?=position('content')?>

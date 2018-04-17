@@ -1,0 +1,6 @@
+{
+    "host":"localhost",
+    "database":"blockster_db",
+    "user":"root",
+    "password":"root"
+}

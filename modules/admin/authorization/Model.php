@@ -35,6 +35,6 @@ class Model
     public function updateTrackingTimestamp()
     {
         $_SESSION['user']['wasOnline'] = time();
-        $this->dbh->exec("UPDATE users SET wasOnline=? WHERE id=?", array(time(), $_SESSION['user']['id']));
+        $this->dbh->exec("UPDATE users SET wasOnline=FROM_UNIXTIME(?) WHERE id=?", array(time(), $_SESSION['user']['id']));
     }
 }

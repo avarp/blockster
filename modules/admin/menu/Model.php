@@ -65,10 +65,10 @@ class Model
         }
 
         $menus = $this->dbh->table('
-            SELECT menu.name, menu.sysname, group_concat(menu.id) as ids, group_concat(languages.isoCode) as langs
+            SELECT menu.name, menu.sysname, GROUP_CONCAT(menu.id) as ids, GROUP_CONCAT(languages.isoCode) as langs
             FROM menu
             INNER JOIN languages ON menu.langId=languages.id
-            GROUP BY menu.sysname
+            GROUP BY menu.sysname, menu.name
         ');
         foreach ($menus as $n=>$m) {
             $menus[$n]['langs'] = explode(',', $m['langs']);
